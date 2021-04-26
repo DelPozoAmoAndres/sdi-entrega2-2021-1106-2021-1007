@@ -1,0 +1,8 @@
+{
+  "name": "sdi-entrega2-2021-1106-2021-1007",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
