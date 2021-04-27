@@ -2,16 +2,27 @@ let express = require('express');
 let app = express();
 
 let swig = require('swig');
+let bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
 let rest = require('request');
-let crypto = require('crypto');
+app.set('rest',rest);
+
+
 
 // Configuración de mongodb
 let mongo = require('mongodb');
-app.set('port', 8081);
-app.set('db', 'mongodb+srv://admin:admin@cluster0.mssmg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority');
 let gestorBD = require("./modules/gestorBD.js");
 gestorBD.init(app, mongo);
+app.set('port', 8081);
+app.set('db', 'mongodb+srv://admin:admin@cluster0.mssmg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority');
 
+
+// Modulos para encryptar contraseñas de usuarios
+let crypto = require('crypto');
+app.set('crypto', crypto);
+app.set('clave', 'abcdefg');
 
 //Routers-----------------------------
 // routerUsuarioSession
@@ -26,16 +37,18 @@ routerUsuarioSession.use(function (req, res, next) {
         res.redirect("/identificarse");
     }
 });
-
+// Validadores
+let validadorUsuario = require("./validadores/validadorUsuario.js");
+validadorUsuario.init(gestorBD);
 
 //Rutas/controladores por lógica
-require("./routes/rusuarios.js")(app, swig, gestorBD);  // (app, param1, param2, etc.)
+require("./rutas/rusuario")(app, swig, gestorBD, validadorUsuario);  // (app, param1, param2, etc.)
 
 let puerto = 3000;
 
 //Variables
-app.set('crypto', crypto);
-app.set('rest',rest);
+
+
 
 app.listen(puerto, function() {
     console.log("Servidor listo "+puerto);
