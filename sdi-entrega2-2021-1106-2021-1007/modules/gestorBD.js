@@ -27,6 +27,7 @@ module.exports = {
             if (err) {
                 funcionCallback(null);
             } else {
+                console.log("Entré")
                 let collection = db.collection("usuarios");
                 collection.find(criterio).toArray(function (err, usuarios) {
                     if (err) {

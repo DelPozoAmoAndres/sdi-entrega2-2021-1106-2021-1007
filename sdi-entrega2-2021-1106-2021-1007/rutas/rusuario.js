@@ -51,7 +51,7 @@ module.exports = function(app,swig,gestorBD,validadorUsuario) {
                     "&tipoMensaje=alert-danger ");
             } else if (usuarios[0].rol=="Usuario Administrador"){
                 req.session.usuario = usuarios[0].email;
-                res.redirect("/home/admin");
+                res.redirect("/homeAdmin");
             }
             else {
                 req.session.usuario = usuarios[0].email;
@@ -59,4 +59,14 @@ module.exports = function(app,swig,gestorBD,validadorUsuario) {
             }
         });
    });
+
+   app.get("/home", function (req, res){
+       let respuesta = swig.renderFile('vistas/homeStandard.html', {});
+       res.send(respuesta);
+   });
+
+    app.get("/homeAdmin", function (req, res){
+        let respuesta = swig.renderFile('vistas/homeAdmin.html', {});
+        res.send(respuesta);
+    });
 }

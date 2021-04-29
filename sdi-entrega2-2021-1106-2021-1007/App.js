@@ -9,7 +9,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 let rest = require('request');
 app.set('rest',rest);
 
-
+//Configuracion de la sesion
+let expressSession = require('express-session');
+app.use(expressSession({
+    secret: 'abcdefg',
+    resave: true,
+    saveUninitialized: true
+}));
 
 // Configuración de mongodb
 let mongo = require('mongodb');
@@ -33,10 +39,28 @@ routerUsuarioSession.use(function (req, res, next) {
         // dejamos correr la petición
         next();
     } else {
-        console.log("va a : " + req.session.destino)
-        res.redirect("/identificarse");
+        //console.log("va a : " + req.session.destino)
+        res.redirect("/login");
     }
 });
+app.use("/home", routerUsuarioSession);
+app.use("/homeAdmin", routerUsuarioSession);
+
+// router usuario administrador
+let routerUsuarioAdmin = express.Router();
+routerUsuarioAdmin.use(function (req, res, next){
+   console.log("routerUsuarioAdmin");
+   let criterio = { "email" : req.session.usuario};
+   gestorBD.obtenerUsuarios(criterio, function (usuarios){
+       if (usuarios[0].rol==="Usuario Administrador")
+           next();
+       else {
+           console.log("El usuario no es administrador");
+           res.redirect("/home");
+       }
+   });
+});
+app.use("/homeAdmin", routerUsuarioAdmin);
 // Validadores
 let validadorUsuario = require("./validadores/validadorUsuario.js");
 validadorUsuario.init(gestorBD);
@@ -45,9 +69,6 @@ validadorUsuario.init(gestorBD);
 require("./rutas/rusuario")(app, swig, gestorBD, validadorUsuario);  // (app, param1, param2, etc.)
 
 let puerto = 3000;
-
-//Variables
-
 
 
 app.listen(puerto, function() {
