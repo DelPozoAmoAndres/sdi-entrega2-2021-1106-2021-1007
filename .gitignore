@@ -1,0 +1,9 @@
+# Proyecto Node.js
+# Default ignored files
+/shelf/
+*/.idea/*
+*/node_modules/*
+*/workspace.xml
+*/package-lock.json
+# Editor-based HTTP Client requests
+/httpRequests/
