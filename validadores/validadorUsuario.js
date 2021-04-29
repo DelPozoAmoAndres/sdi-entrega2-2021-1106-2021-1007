@@ -5,18 +5,15 @@ module.exports = {
     },
 //metodo para verificar valores introducidos al intentar registrarse un usuario
     registro: function (req, res) {
-        console.log(req.body)
+        let criterio = {'email' : req.body.email}
         //comprobamos que email no esté vacio
         if (req.body.email === "" || req.body.email === " ") {
             res.redirect("/registrarse?mensaje=Email está vacio")
         }
         //comprobamos que email no esté ya registrado
-        else if (this.gestorBD.obtenerUsuarios(req.body.email, function (resultado) {
-                if (resultado !== null) {
-                    res.redirect("/registrarse?mensaje=Email ya usado")
-                    return true;
-                }
-            }))return false;
+        else if (this.checkEmail(criterio)) {
+            res.redirect("/registrarse?mensaje=Email ya usado")
+        }
         //comprobamos que nombre no esté vacio
         else if (req.body.nombre.replace(/ /g, "")==="") {
             res.redirect("/registrarse?mensaje=Nombre está vacio")
@@ -49,5 +46,13 @@ module.exports = {
             return true
         }
         return false
+    },
+    checkEmail : function (criterio){
+        this.gestorBD.obtenerUsuarios(criterio, function (resultado) {
+            if (resultado !== null) {
+                return true;
+            }
+            return false;
+        })
     }
 }

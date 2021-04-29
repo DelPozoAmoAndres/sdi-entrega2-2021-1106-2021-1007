@@ -16,7 +16,7 @@ let mongo = require('mongodb');
 let gestorBD = require("./modules/gestorBD.js");
 gestorBD.init(app, mongo);
 app.set('port', 8081);
-app.set('db', 'mongodb+srv://admin:admin@cluster0.mssmg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority');
+app.set('db', 'mongodb://admin:admin@cluster0-shard-00-00.mssmg.mongodb.net:27017,cluster0-shard-00-01.mssmg.mongodb.net:27017,cluster0-shard-00-02.mssmg.mongodb.net:27017/MyWallapop?ssl=true&replicaSet=atlas-96ofd9-shard-0&authSource=admin&retryWrites=true&w=majority');
 
 
 // Modulos para encryptar contraseñas de usuarios

@@ -27,7 +27,7 @@ module.exports = function(app,swig,gestorBD,validadorUsuario) {
             if (id == null){
                 res.redirect("/registrarse?mensaje=Error al registrar usuario")
             } else {
-                res.redirect("/registrarse?mensaje=Nuevo usuario registrado")
+                res.redirect("/login?mensaje=Nuevo usuario registrado")
             }
         });
     });
@@ -36,7 +36,7 @@ module.exports = function(app,swig,gestorBD,validadorUsuario) {
         res.send(respuesta);
     });
 
-    app.post("/login", function(req, res) {
+   app.post("/login", function(req, res) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
         let criterio = {
@@ -58,5 +58,5 @@ module.exports = function(app,swig,gestorBD,validadorUsuario) {
                 res.redirect("/home");
             }
         });
-    });
+   });
 }
