@@ -45,6 +45,7 @@ routerUsuarioSession.use(function (req, res, next) {
 });
 app.use("/home", routerUsuarioSession);
 app.use("/homeAdmin", routerUsuarioSession);
+app.use("/product/*", routerUsuarioSession);
 
 // router usuario administrador
 let routerUsuarioAdmin = express.Router();
@@ -64,11 +65,14 @@ app.use("/homeAdmin", routerUsuarioAdmin);
 app.use("/admin/*", routerUsuarioAdmin);
 // Validadores
 let validadorUsuario = require("./validadores/validadorUsuario.js");
+let validadorProducto = require("./validadores/validadorProducto.js");
 validadorUsuario.init(gestorBD);
 
 //Rutas/controladores por lógica
 require("./rutas/rusuario")(app, swig, gestorBD, validadorUsuario);  // (app, param1, param2, etc.)
 require("./rutas/radmin")(app, swig, gestorBD);
+require("./rutas/ruserstandard")(app, swig, gestorBD);
+require("./rutas/rproductos")(app, swig, gestorBD, validadorProducto);
 
 let puerto = 3000;
 

@@ -6,9 +6,8 @@
 <h1>Vista de usuario</h1><br>
 <h2>Lista de ofertas propias</h2>
 
-<button type="button submit" class="btn btn-primary">Eliminar</button>
+<a class="btn btn-primary" type="button" href="/product/add">Añadir oferta</a>
 <div class="table-responsive">
-    <a class="btn btn-primary" type="button" href="/product/add">
     <table class="table table-hover">
         <thead>
         <tr>
@@ -20,7 +19,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for oferta in ofertas %}
+        {% for oferta in productos %}
         <tr>
             <td>{{ oferta.nombre }}</td>
             <td>{{ oferta.descripcion }}</td>
