@@ -27,15 +27,49 @@ module.exports = {
             if (err) {
                 funcionCallback(null);
             } else {
-                console.log("Entré")
                 let collection = db.collection("usuarios");
                 collection.find(criterio).toArray(function (err, usuarios) {
                     if (err) {
                         funcionCallback(null);
                     } else {
+                        console.log("Usuario loged");
                         funcionCallback(usuarios);
                     }
                     db.close();
+                });
+            }
+        });
+    },
+    insertarProducto: function (producto, functionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                functionCallback(null);
+            } else {
+                let collection = db.collection('productos');
+                collection.insertOne(producto, function (err, result) {
+                    if (err) {
+                        functionCallback(null);
+                    } else {
+                        functionCallback(result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    obtenerProductos: function (criterio, functionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                functionCallback(null);
+            } else {
+                let collection = db.collection("productos");
+                collection.find(criterio).toArray(function (err, productos) {
+                    if (err)
+                        functionCallback(null);
+                    else {
+                        console.log("Productos encontrados");
+                        functionCallback(productos);
+                    }
                 });
             }
         });

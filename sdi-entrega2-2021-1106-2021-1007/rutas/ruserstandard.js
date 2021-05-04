@@ -1,8 +1,18 @@
 module.exports = function (app, swig, gestorBD){
     app.get("/home", function (req, res){
-        let respuesta = swig.renderFile('vistas/homeStandard.html', {
-            user: req.session.usuario
+        let criterio = {
+            autor : req.session.usuario
+        }
+        gestorBD.obtenerProductos(criterio, function (productos){
+            if (productos==null)
+                res.redirect("/systemError")
+            else {
+                let respuesta = swig.renderFile('vistas/homeStandard.html', {
+                    user: req.session.usuario,
+                    productos : productos
+                });
+                res.send(respuesta);
+            }
         });
-        res.send(respuesta);
     });
 };
