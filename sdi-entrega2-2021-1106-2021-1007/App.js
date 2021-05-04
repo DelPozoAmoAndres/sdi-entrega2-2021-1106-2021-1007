@@ -61,12 +61,14 @@ routerUsuarioAdmin.use(function (req, res, next){
    });
 });
 app.use("/homeAdmin", routerUsuarioAdmin);
+app.use("/admin/*", routerUsuarioAdmin);
 // Validadores
 let validadorUsuario = require("./validadores/validadorUsuario.js");
 validadorUsuario.init(gestorBD);
 
 //Rutas/controladores por lógica
 require("./rutas/rusuario")(app, swig, gestorBD, validadorUsuario);  // (app, param1, param2, etc.)
+require("./rutas/radmin")(app, swig, gestorBD);
 
 let puerto = 3000;
 

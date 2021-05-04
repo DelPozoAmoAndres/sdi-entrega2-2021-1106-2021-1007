@@ -3,5 +3,32 @@
 {% block titulo %} Admin home {% endblock %}
 
 {% block contenido_principal %}
-<h1>Aquí iria la lista de usuarios</h1>
+<h1>Vista de administrador</h1><br>
+<h2>Lista de usuarios</h2>
+<form method="post" action="/admin/delete">
+    <button type="button submit" class="btn btn-primary">Eliminar</button>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Saldo</th>
+                <th class="col-md-1"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.nombre }}</td>
+                <td>{{ usuario.apellidos }}</td>
+                <td>{{ usuario.dinero }}€</td>
+                <td> <input type="checkbox"/> <br>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</form>
 {% endblock %}

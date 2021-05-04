@@ -64,9 +64,4 @@ module.exports = function(app,swig,gestorBD,validadorUsuario) {
        let respuesta = swig.renderFile('vistas/homeStandard.html', {});
        res.send(respuesta);
    });
-
-    app.get("/homeAdmin", function (req, res){
-        let respuesta = swig.renderFile('vistas/homeAdmin.html', {});
-        res.send(respuesta);
-    });
 }
