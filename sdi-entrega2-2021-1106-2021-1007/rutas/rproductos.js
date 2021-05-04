@@ -1,6 +1,8 @@
 module.exports = function(app,swig,gestorBD,validadorProductos) {
     app.get("/product/add", function (req, res) {
-        let respuesta = swig.renderFile('vistas/addproduct.html', {});
+        let respuesta = swig.renderFile('vistas/addproduct.html', {
+            user: req.session.usuario
+        });
         res.send(respuesta);
     });
 
