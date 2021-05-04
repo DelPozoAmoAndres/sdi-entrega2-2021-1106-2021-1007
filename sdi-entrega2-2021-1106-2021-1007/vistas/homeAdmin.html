@@ -5,8 +5,29 @@
 {% block contenido_principal %}
 <h1>Vista de administrador</h1><br>
 <h2>Lista de usuarios</h2>
-<form method="post" action="/admin/delete">
-    <button type="button submit" class="btn btn-primary">Eliminar</button>
+<form name="submit" lass="form-horizontal" method="post" action="/admin/delete/">
+    <button type="button submit" onclick="eliminar()" class="btn btn-primary">Eliminar</button>
+    <script>
+        function eliminar() {
+            var boton = document.getElementsByName("submit")[0]
+            var url = boton.getAttribute("action")
+            var first = true;
+            for (checkbox of document.getElementsByName("checkBox")) {
+                if (checkbox.checked) {
+                    var user = checkbox.getAttribute("id")
+                    console.log(user)
+
+                    if (!first) {
+                        url += "," + user.toString()
+                    } else {
+                        url += user.toString()
+                        first = false
+                    }
+                }
+            }
+            boton.setAttribute("action", url)
+        }
+    </script>
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
@@ -23,7 +44,7 @@
                 <td>{{ usuario.nombre }}</td>
                 <td>{{ usuario.apellidos }}</td>
                 <td>{{ usuario.dinero }}€</td>
-                <td> <input type="checkbox"/> <br>
+                <td><input id={{usuario._id.toString()}} name="checkBox" type="checkbox"/> <br>
                 </td>
             </tr>
             {% endfor %}

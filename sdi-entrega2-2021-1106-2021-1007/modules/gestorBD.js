@@ -32,8 +32,24 @@ module.exports = {
                     if (err) {
                         funcionCallback(null);
                     } else {
-                        console.log("Usuario loged");
                         funcionCallback(usuarios);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    eliminarUsuario: function (usuario, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('usuarios');
+                collection.remove(usuario, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
                     }
                     db.close();
                 });
@@ -70,6 +86,23 @@ module.exports = {
                         console.log("Productos encontrados");
                         functionCallback(productos);
                     }
+                });
+            }
+        });
+    },
+    eliminarUsuario: function (producto, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('producto');
+                collection.remove(producto, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
                 });
             }
         });
