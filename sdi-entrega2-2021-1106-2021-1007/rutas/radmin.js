@@ -6,6 +6,7 @@ module.exports = function(app,swig,gestorBD) {
                 res.redirect("/systemError");
             else {
                 let respuesta = swig.renderFile('vistas/homeAdmin.html', {
+                    user: req.session.usuario,
                     usuarios : usuarios
                 });
                 res.send(respuesta);
