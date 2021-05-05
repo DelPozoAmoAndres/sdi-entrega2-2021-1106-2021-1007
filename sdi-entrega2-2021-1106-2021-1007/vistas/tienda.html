@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 
-{% block titulo %} Standard home {% endblock %}
+{% block titulo %} Tienda de ofertas {% endblock %}
 
 {% block contenido_principal %}
-<h1>Vista de usuario</h1><br>
-<h2>Lista de ofertas propias</h2>
+<h1>Tienda de Ofertas</h1><br>
 
-<a class="btn btn-primary" type="button" href="/product/add">Añadir oferta</a>
 <div class="table-responsive">
     <table class="table table-hover">
         <thead>
@@ -19,16 +17,16 @@
         </tr>
         </thead>
         <tbody>
-        {% for oferta in productos %}
-
+        {% for oferta in ofertas %}
         <tr>
             <td>{{ oferta.nombre }}</td>
             <td>{{ oferta.descripcion }}</td>
             <td>{{ oferta.fecha }}</td>
             <td>{{ oferta.precio }}€</td>
-            <td><a href="/product/delete/{{ oferta._id.toString() }}" class="btn btn-primary">Eliminar</a></td>
+            {% if oferta.autor != user %}
+                <td><a class="btn btn-primary" href="/product/buy/{{ oferta._id.toString() }}">Comprar</a></td>
+            {% endif %}
         </tr>
-
         {% endfor %}
         </tbody>
     </table>

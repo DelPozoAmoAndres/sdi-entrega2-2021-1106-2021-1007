@@ -62,9 +62,8 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
     });
 
     app.get("/logout", function (req, res) {
-        let respuesta = swig.renderFile('vistas/blogin.html', {});
         req.session.usuario = null;
-        res.send(respuesta);
+        res.redirect("/login")
     });
 
     app.get("/", function (req, res) {

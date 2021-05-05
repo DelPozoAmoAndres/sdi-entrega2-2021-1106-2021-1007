@@ -25,4 +25,28 @@ module.exports = function(app,swig,gestorBD,validadorProductos) {
                 res.redirect("/home?mensaje=Oferta añadida correctamente");
         });
     });
+    app.get("/product/delete/:id", function(req, res){
+        let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        gestorBD.eliminarProducto(criterio, function (canciones) {
+            if (canciones == null) {
+                res.send(respuesta);
+            } else {
+                res.redirect("/home");
+            }
+        });
+    });
+
+    app.get("/tienda", function (req, res){
+        gestorBD.obtenerProductos({}, function (productos){
+            if (productos==null)
+                res.redirect("/systemError");
+            else {
+                let respuesta = swig.renderFile('vistas/tienda.html', {
+                    user: req.session.usuario,
+                    ofertas : productos
+                });
+                res.send(respuesta);
+            }
+        });
+    });
 };

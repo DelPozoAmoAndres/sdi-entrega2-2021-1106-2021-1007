@@ -90,13 +90,13 @@ module.exports = {
             }
         });
     },
-    eliminarUsuario: function (producto, funcionCallback) {
+    eliminarProducto: function (criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
-                let collection = db.collection('producto');
-                collection.remove(producto, function (err, result) {
+                let collection = db.collection('productos');
+                collection.remove(criterio, function (err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {
