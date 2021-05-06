@@ -8,7 +8,7 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
     //metodo que se ejecutará una vez se intente crear un usuario con los datos introducidos
     app.post("/registrarse", function (req, res) {
         //comprobar si hay errores al introducir los valores
-        if (!validadorUsuario.registro(req, res))
+        if ( !validadorUsuario.registro(req, res))
             return;
         //guardar en modo seguro la contraseña
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))

@@ -17,36 +17,46 @@ module.exports = function (app, swig, gestorBD) {
     app.post("/admin/delete/:lista", function (req, res) {
         let lista = {"lista": req.params.lista};
         let users = lista.lista.split(",")
-        for (i=0; i<users.length;i++) {
-            let criterio={"_id": gestorBD.mongo.ObjectID(users[i])}
-            gestorBD.eliminarUsuario(criterio, function (usuariosfinales) {
-                console.log(usuariosfinales)
-                if (usuariosfinales == null) {
+        for (i = 0; i < users.length; i++) {
+            let criterioUsuario = {"_id": gestorBD.mongo.ObjectID(users[i])}
+            gestorBD.obtenerUsuarios(criterioUsuario, function (usuario) {
+                if (usuario.length<0) {
                     res.redirect("/systemError")
-                    console.log("Error al eliminar usuario")
+                    console.log("Error al obtener usuario")
                     return
-                }
-                else {
-                    console.log("Eliminacion correcta del usuario")
-                    gestorBD.obtenerProductos(criterio,function (productos){
-                        if(productos==null){
+                } else {
+                    gestorBD.eliminarUsuario(criterioUsuario, function (usuariosfinales) {
+                        if (usuariosfinales == null) {
                             res.redirect("/systemError")
-                            console.log("Error al listar productos del usuario")
+                            console.log("Error al eliminar usuario")
                             return
-                        }
-                        else{
-                            for(producto of productos) {
-                                gestorBD.eliminarProducto(producto, function (productosFinales) {
-                                    if (productosFinales == null) {
-                                        res.redirect("/systemError")
-                                        console.log("Error al eliminar productos del usuario")
-                                        return;
+                        } else {
+                            console.log("Eliminacion correcta del usuario")
+                            console.log("Usuario"+usuario[0])
+                            criterioUsuario={"autor": (usuario[0].email)}
+                            gestorBD.obtenerProductos(criterioUsuario, function (productos) {
+                                if (productos == null) {
+                                    res.redirect("/systemError")
+                                    console.log("Error al listar productos del usuario")
+                                    return
+                                } else {
+                                    console.log(productos)
+                                    for (j = 0; j < productos.length; j++) {
+                                        console.log("Producto" + productos[i])
+                                        let criterioProducto = {"_id": gestorBD.mongo.ObjectID(productos[i]._id)};
+                                        gestorBD.eliminarProducto(criterioProducto, function (productosFinales) {
+                                            if (productosFinales == null) {
+                                                res.redirect("/systemError")
+                                                console.log("Error al eliminar productos del usuario")
+                                                return;
+                                            }
+                                        })
                                     }
-                                })
-                            }
+                                }
+                            })
+
                         }
                     })
-
                 }
             })
         }

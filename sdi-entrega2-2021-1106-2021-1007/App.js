@@ -34,12 +34,10 @@ app.set('clave', 'abcdefg');
 // routerUsuarioSession
 var routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function (req, res, next) {
-    console.log("routerUsuarioSession");
     if (req.session.usuario) {
         // dejamos correr la petición
         next();
     } else {
-        //console.log("va a : " + req.session.destino)
         res.redirect("/login");
     }
 });
@@ -50,13 +48,11 @@ app.use("/product/*", routerUsuarioSession);
 // router usuario administrador
 let routerUsuarioAdmin = express.Router();
 routerUsuarioAdmin.use(function (req, res, next){
-   console.log("routerUsuarioAdmin");
    let criterio = { "email" : req.session.usuario};
    gestorBD.obtenerUsuarios(criterio, function (usuarios){
        if (usuarios[0].rol==="Usuario Administrador")
            next();
        else {
-           console.log("El usuario no es administrador");
            res.redirect("/home");
        }
    });

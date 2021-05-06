@@ -83,7 +83,6 @@ module.exports = {
                     if (err)
                         functionCallback(null);
                     else {
-                        console.log("Productos encontrados");
                         functionCallback(productos);
                     }
                 });

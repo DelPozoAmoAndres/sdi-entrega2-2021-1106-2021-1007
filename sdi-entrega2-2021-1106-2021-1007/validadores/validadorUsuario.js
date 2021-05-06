@@ -6,12 +6,19 @@ module.exports = {
 //metodo para verificar valores introducidos al intentar registrarse un usuario
     registro: function (req, res) {
         let criterio = {'email' : req.body.email}
+        let emailUsed=false;
+        this.gestorBD.obtenerUsuarios(criterio, function (resultado) {
+            if (resultado.length>0) {
+                console.log("Entra")
+                emailUsed=true;
+            }
+
         //comprobamos que email no esté vacio
         if (req.body.email === "" || req.body.email === " ") {
             res.redirect("/registrarse?mensaje=Email está vacio")
         }
         //comprobamos que email no esté ya registrado
-        else if (this.checkEmail(criterio)) {
+        else if ( emailUsed) {
             res.redirect("/registrarse?mensaje=Email ya usado")
         }
         //comprobamos que nombre no esté vacio
@@ -43,16 +50,11 @@ module.exports = {
             || req.body.passwordConfirm.localeCompare(req.body.password)){
             res.redirect("/registrarse?mensaje=No coinciden las contraseñas")
         } else {
+            console.log("no sale")
             return true
         }
+        console.log("Sale")
         return false
-    },
-    checkEmail : function (criterio){
-        this.gestorBD.obtenerUsuarios(criterio, function (resultado) {
-            if (resultado !== null) {
-                return true;
-            }
-            return false;
         })
-    }
+    },
 }
