@@ -6,31 +6,33 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
         res.send(respuesta);
     });
     //metodo que se ejecutará una vez se intente crear un usuario con los datos introducidos
-    app.post("/registrarse", function (req, res) {
+    app.post("/registrarse", async function (req, res) {
         //comprobar si hay errores al introducir los valores
-        if ( !validadorUsuario.registro(req, res))
-            return;
-        //guardar en modo seguro la contraseña
-        let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
-            .update(req.body.password).digest('hex');
-        //crear un nuevo objeto usuario con los valores introducidos
-        let usuario = {
-            email: req.body.email,
-            nombre: req.body.nombre,
-            apellidos: req.body.apellidos,
-            password: seguro,
-            dinero: 100.0,
-            rol: "Usuario Estándar"
-        }
-        //insertamos el usuario en base de datos para poder iniciar sesión posteriormente
-        gestorBD.insertarUsuario(usuario, function (id) {
-            //si se produjo un error
-            if (id == null) {
-                res.redirect("/registrarse?mensaje=Error al registrar usuario")
-            } else {
-                res.redirect("/login?mensaje=Nuevo usuario registrado")
+        validadorUsuario.registro(req, res, function (result){
+            if(result) {
+                //guardar en modo seguro la contraseña
+                let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
+                    .update(req.body.password).digest('hex');
+                //crear un nuevo objeto usuario con los valores introducidos
+                let usuario = {
+                    email: req.body.email,
+                    nombre: req.body.nombre,
+                    apellidos: req.body.apellidos,
+                    password: seguro,
+                    dinero: 100.0,
+                    rol: "Usuario Estándar"
+                }
+                //insertamos el usuario en base de datos para poder iniciar sesión posteriormente
+                gestorBD.insertarUsuario(usuario, function (id) {
+                    //si se produjo un error
+                    if (id == null) {
+                        res.redirect("/registrarse?mensaje=Error al registrar usuario")
+                    } else {
+                        res.redirect("/login?mensaje=Nuevo usuario registrado")
+                    }
+                });
             }
-        });
+        })
     });
     app.get("/login", function (req, res) {
         req.session.usuario = null;
