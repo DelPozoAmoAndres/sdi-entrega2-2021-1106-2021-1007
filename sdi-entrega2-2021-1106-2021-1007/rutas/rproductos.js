@@ -42,10 +42,30 @@ module.exports = function(app,swig,gestorBD,validadorProductos) {
     });
 
     app.get("/tienda", function (req, res){
-        gestorBD.obtenerProductos({}, function (productos){
+        let criterio = {};
+        if (req.query.busqueda != null && req.query.busqueda!="") {
+
+            criterio = {"nombre": { $regex:new RegExp(req.query.busqueda, 'i')}};
+        }
+        let pg = parseInt(req.query.pg); // Es String !!!
+        if (req.query.pg == null) { // Puede no venir el param
+            pg = 1;
+        }
+        gestorBD.obtenerProductosPg(criterio, pg,function (productos,total){
             if (productos==null)
                 res.redirect("/systemError");
             else {
+                console.log(total);
+                let ultimaPg = total / 5;
+                if (total % 5 > 0) { // Sobran decimales
+                    ultimaPg = ultimaPg + 1;
+                }
+                let paginas = []; // paginas mostrar
+                for (let i = pg - 2; i <= pg + 2; i++) {
+                    if (i > 0 && i <= ultimaPg) {
+                        paginas.push(i);
+                    }
+                }
                 let usuario = {
                     email : req.session.usuario,
                     rol : req.session.rol,
@@ -53,7 +73,10 @@ module.exports = function(app,swig,gestorBD,validadorProductos) {
                 }
                 let respuesta = swig.renderFile('vistas/tienda.html', {
                     userSession: usuario,
-                    ofertas : productos
+                    ofertas : productos,
+                    paginas: paginas,
+                    actual: pg,
+                    busqueda: req.query.busqueda
                 });
                 res.send(respuesta);
             }

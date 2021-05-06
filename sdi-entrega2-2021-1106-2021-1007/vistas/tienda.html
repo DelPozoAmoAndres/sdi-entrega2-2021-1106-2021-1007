@@ -3,6 +3,23 @@
 {% block titulo %} Tienda de ofertas {% endblock %}
 
 {% block contenido_principal %}
+<!--Búsqueda-->
+<div class="row">
+    <div id="custom-search-input ">
+        <form method="get" action="/tienda">
+            <div class="input-group col-xs-8 col-sm-6 col-md-4 col-lg-5 pull-right">
+                <input type="text" class="search-query form-control" placeholder="Nombre de la canción"
+                       name="busqueda"/>
+                <span class="input-group-btn">
+                    <button class="btn" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
 <h1>Tienda de Ofertas</h1><br>
 
 <div class="table-responsive">
@@ -23,7 +40,9 @@
             <td>{{ oferta.descripcion }}</td>
             <td>{{ oferta.fecha }}</td>
             <td>{{ oferta.precio }}€</td>
-            {% if oferta.autor != user %}
+            {% if oferta.comprador %}
+                <td><span>Vendido</span></td>
+            {% else %}
                 <td><a class="btn btn-primary" href="/product/buy/{{ oferta._id.toString() }}">Comprar</a></td>
             {% endif %}
         </tr>
@@ -31,6 +50,17 @@
         </tbody>
     </table>
 </div>
-
-
+<!--Paginaciónmostrarlaactual y 2 anterioresy dossiguientes-->
+<div class="row text-center">
+    <ul class="pagination">
+        {% for pagina in paginas %}
+        <li class="page-item" id="pi-{{pagina}}">
+            <a class="page-link" href="/tienda?pg={{pagina}}&busqueda={{busqueda}}"> {{pagina}}</a>
+        </li>
+        {% endfor %}
+        <script>
+            $("#pi-" + "{{actual}}").addClass("active");
+        </script>
+    </ul>
+</div>
 {% endblock %}
