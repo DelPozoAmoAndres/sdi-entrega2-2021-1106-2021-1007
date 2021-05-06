@@ -40,10 +40,9 @@ module.exports = function (app, swig, gestorBD) {
                                     console.log("Error al listar productos del usuario")
                                     return
                                 } else {
-                                    console.log(productos)
+                                    console.log("Listado correcto de los productos")
                                     for (j = 0; j < productos.length; j++) {
-                                        console.log("Producto" + productos[i])
-                                        let criterioProducto = {"_id": gestorBD.mongo.ObjectID(productos[i]._id)};
+                                        let criterioProducto = {"_id": gestorBD.mongo.ObjectID(productos[j]._id)};
                                         gestorBD.eliminarProducto(criterioProducto, function (productosFinales) {
                                             if (productosFinales == null) {
                                                 res.redirect("/systemError")
@@ -52,6 +51,7 @@ module.exports = function (app, swig, gestorBD) {
                                             }
                                         })
                                     }
+                                    console.log("Eliminación correcta de los productos")
                                 }
                             })
 
