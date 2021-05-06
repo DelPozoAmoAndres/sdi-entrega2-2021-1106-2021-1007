@@ -42,10 +42,15 @@ module.exports = function(app,swig,gestorBD,validadorProductos) {
     });
 
     app.get("/tienda", function (req, res){
-        let criterio = {};
+        let criterio = {"autor": {$ne :req.session.usuario}};
         if (req.query.busqueda != null && req.query.busqueda!="") {
 
-            criterio = {"nombre": { $regex:new RegExp(req.query.busqueda, 'i')}};
+            criterio = {$and:
+                    [
+                        {"nombre": { $regex :new RegExp(req.query.busqueda, 'i')}},
+                        {"autor": {$ne :req.session.usuario}}
+                    ]
+            }   ;
         }
         let pg = parseInt(req.query.pg); // Es String !!!
         if (req.query.pg == null) { // Puede no venir el param
@@ -55,7 +60,6 @@ module.exports = function(app,swig,gestorBD,validadorProductos) {
             if (productos==null)
                 res.redirect("/systemError");
             else {
-                console.log(total);
                 let ultimaPg = total / 5;
                 if (total % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
