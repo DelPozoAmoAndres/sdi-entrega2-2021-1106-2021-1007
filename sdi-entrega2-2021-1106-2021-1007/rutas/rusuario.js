@@ -1,7 +1,6 @@
 module.exports = function (app, swig, gestorBD, validadorUsuario) {
     //metodo que se ejecutará una vez se quiera ver el formulario de registro para crear un usuario
     app.get("/registrarse", function (req, res) {
-        req.session.usuario = null;
         let respuesta = swig.renderFile('vistas/registro.html', {});
         res.send(respuesta);
     });
@@ -35,7 +34,6 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
         })
     });
     app.get("/login", function (req, res) {
-        req.session.usuario = null;
         let respuesta = swig.renderFile('vistas/blogin.html', {});
         res.send(respuesta);
     });
@@ -50,21 +48,25 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null || usuarios.length == 0) {
                 req.session.usuario = null;
+                req.session.rol = usuarios[0].rol;
                 res.redirect("/login" +
                     "?mensaje=Email o password incorrecto" +
                     "&tipoMensaje=alert-danger ");
             } else if (usuarios[0].rol == "Usuario Administrador") {
                 req.session.usuario = usuarios[0].email;
+                req.session.rol = usuarios[0].rol;
                 res.redirect("/homeAdmin");
             } else {
                 req.session.usuario = usuarios[0].email;
+                req.session.rol = usuarios[0].rol;
+                req.session.dinero = usuarios[0].dinero;
                 res.redirect("/home");
             }
         });
     });
 
     app.get("/logout", function (req, res) {
-        req.session.usuario = null;
+        req.session=null;
         res.redirect("/login")
     });
 

@@ -5,10 +5,13 @@ module.exports = function (app, swig, gestorBD) {
             if (usuarios === null || usuarios.length === 0)
                 res.redirect("/systemError");
             else {
+                let usuario = {
+                    email : req.session.usuario,
+                    rol : req.session.rol
+                }
                 let respuesta = swig.renderFile('vistas/homeAdmin.html', {
-                    user: req.session.usuario,
-                    usuarios: usuarios,
-                    rol : 'Usuario Administrador'
+                    userSession: usuario,
+                    usuarios: usuarios
                 });
                 res.send(respuesta);
             }

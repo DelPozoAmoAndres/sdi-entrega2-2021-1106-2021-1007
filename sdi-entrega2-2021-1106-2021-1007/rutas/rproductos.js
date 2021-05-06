@@ -1,7 +1,12 @@
 module.exports = function(app,swig,gestorBD,validadorProductos) {
     app.get("/product/add", function (req, res) {
+        let usuario = {
+            email : req.session.usuario,
+            rol : req.session.rol,
+            dinero : req.session.dinero,
+        }
         let respuesta = swig.renderFile('vistas/addproduct.html', {
-            user: req.session.usuario
+            userSession: usuario
         });
         res.send(respuesta);
     });
@@ -41,8 +46,13 @@ module.exports = function(app,swig,gestorBD,validadorProductos) {
             if (productos==null)
                 res.redirect("/systemError");
             else {
+                let usuario = {
+                    email : req.session.usuario,
+                    rol : req.session.rol,
+                    dinero : req.session.dinero,
+                }
                 let respuesta = swig.renderFile('vistas/tienda.html', {
-                    user: req.session.usuario,
+                    userSession: usuario,
                     ofertas : productos
                 });
                 res.send(respuesta);

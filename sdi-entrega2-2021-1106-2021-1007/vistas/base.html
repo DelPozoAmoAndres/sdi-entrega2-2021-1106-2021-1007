@@ -24,15 +24,19 @@
             <img src="/img/logo.png" alt="logo"/>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
-            {% if rol!=='Usuario Administrador' && user %}
+            {% if userSession && userSession.rol!='Usuario Administrador' %}
                 <ul class="nav navbar-nav">
-                    <li id="mTienda" class="active"><a href="/tienda">Tienda</a></li>
+                    <li id="mTienda"><a href="/tienda">Tienda</a></li>
                     <li id="mPublicaciones"><a href="/home">Mis ofertas</a></li>
                     <li id="mCompras"><a href="/user/buyed">Mis Compras</a></li>
                 </ul>
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
-                {% if user %}
+                {% if userSession %}
+                    {% if userSession.rol!='Usuario Administrador' %}
+                    <li><a>{{userSession.email}}</a></li>
+                    <li><a>{{userSession.dinero}}€</a></li>
+                    {% endif %}
                     <li><a href="/logout"><span class="glyphicon glyphicon-user"></span>Logout</a></li>
                 {% else %}
                     <li><a href="/registrarse"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>

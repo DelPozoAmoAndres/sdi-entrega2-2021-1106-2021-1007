@@ -7,8 +7,14 @@ module.exports = function (app, swig, gestorBD){
             if (productos==null)
                 res.redirect("/systemError")
             else {
+                console.log(productos);
+                let usuario = {
+                    email : req.session.usuario,
+                    rol : req.session.rol,
+                    dinero : req.session.dinero,
+                }
                 let respuesta = swig.renderFile('vistas/homeStandard.html', {
-                    user: req.session.usuario,
+                    userSession : usuario,
                     productos : productos
                 });
                 res.send(respuesta);
