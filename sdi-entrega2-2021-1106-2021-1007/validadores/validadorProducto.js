@@ -24,5 +24,12 @@ module.exports = {
         else
             return true;
         return false;
+    },
+    checkSaldo: function (req, res,url,cantidad){
+        if (cantidad>req.session.dinero) {
+            res.redirect(url + "?mensaje=No tienes suficiente saldo&tipoMensaje=alert-danger")
+            return false;
+        }
+        return true;
     }
 }

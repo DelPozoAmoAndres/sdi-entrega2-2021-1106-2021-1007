@@ -44,6 +44,8 @@ routerUsuarioSession.use(function (req, res, next) {
 app.use("/home", routerUsuarioSession);
 app.use("/homeAdmin", routerUsuarioSession);
 app.use("/product/*", routerUsuarioSession);
+app.use("/user/*", routerUsuarioSession);
+app.use("/tienda", routerUsuarioSession);
 
 // router usuario administrador
 let routerUsuarioAdmin = express.Router();

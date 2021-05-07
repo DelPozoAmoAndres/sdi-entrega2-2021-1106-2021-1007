@@ -21,7 +21,36 @@
 </div>
 
 <h1>Tienda de Ofertas</h1><br>
-
+<h2>Destacadas</h2>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Fecha</th>
+            <th>Precio</th>
+            <th class="col-md-1"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for oferta in destacados %}
+        <tr>
+            <td>{{ oferta.nombre }}</td>
+            <td>{{ oferta.descripcion }}</td>
+            <td>{{ oferta.fecha }}</td>
+            <td>{{ oferta.precio }}€</td>
+            {% if oferta.comprador %}
+            <td><span>Vendido</span></td>
+            {% else %}
+            <td><a class="btn btn-primary" href="/product/buy/{{ oferta._id.toString() }}">Comprar</a></td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<h2>Lista de productos</h2>
 <div class="table-responsive">
     <table class="table table-hover">
         <thead>

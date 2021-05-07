@@ -24,7 +24,7 @@ module.exports = function (app, swig, gestorBD) {
         let criterio = {
             comprador: req.session.usuario
         }
-        gestorBD.obtenerCompras(criterio, function (compras) {
+        gestorBD.obtenerProductos(criterio, function (compras) {
                 if (compras == null)
                     res.redirect("/systemError")
                 else {

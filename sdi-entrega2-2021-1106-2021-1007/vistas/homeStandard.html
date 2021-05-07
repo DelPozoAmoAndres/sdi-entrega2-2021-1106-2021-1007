@@ -26,6 +26,11 @@
             <td>{{ oferta.descripcion }}</td>
             <td>{{ oferta.fecha }}</td>
             <td>{{ oferta.precio }}€</td>
+            {% if oferta.destacada %}
+            <td><span>⭐Destacada⭐</span></td>
+            {% else %}
+            <td><a href="/product/distinguish/{{ oferta._id.toString() }}" class="btn btn-primary">Destacar</a></td>
+            {% endif %}
             <td><a href="/product/delete/{{ oferta._id.toString() }}" class="btn btn-primary">Eliminar</a></td>
         </tr>
 

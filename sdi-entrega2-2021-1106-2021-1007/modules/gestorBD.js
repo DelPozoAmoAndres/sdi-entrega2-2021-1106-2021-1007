@@ -158,17 +158,18 @@ module.exports = {
             }
         });
     },
-    obtenerCompras: function (criterio, funcionCallback) {
+    marcarDestacado:function (criterio,values,functionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
                 let collection = db.collection('productos');
-                collection.find(criterio).toArray(function (err, compras) {
+                let newValues={$set: values}
+                collection.updateOne(criterio,newValues,function(err,producto){
                     if (err) {
-                        funcionCallback(null);
+                        functionCallback(null);
                     } else {
-                        funcionCallback(compras);
+                        functionCallback(producto);
                     }
                     db.close();
                 });
