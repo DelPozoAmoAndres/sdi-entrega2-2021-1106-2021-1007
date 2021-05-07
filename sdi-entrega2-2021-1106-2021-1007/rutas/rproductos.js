@@ -19,7 +19,7 @@ module.exports = function(app,swig,gestorBD,validadorProductos) {
         let producto = {
             nombre: req.body.nombre,
             descripcion: req.body.descripcion,
-            precio: req.body.precio,
+            precio: Number.parseInt(req.body.precio),
             fecha: date,
             autor: req.session.usuario
         }
@@ -32,9 +32,9 @@ module.exports = function(app,swig,gestorBD,validadorProductos) {
     });
     app.get("/product/delete/:id", function(req, res){
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        gestorBD.eliminarProducto(criterio, function (canciones) {
-            if (canciones == null) {
-                res.send(respuesta);
+        gestorBD.eliminarProducto(criterio, function (productos) {
+            if (productos == null) {
+                res.redirect("/systemError");
             } else {
                 res.redirect("/home");
             }
@@ -85,5 +85,40 @@ module.exports = function(app,swig,gestorBD,validadorProductos) {
                 res.send(respuesta);
             }
         });
+    });
+
+    app.get("/product/buy/:id", function(req, res){
+        let criterioProducto = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        let criterioUsuario = {"email": req.session.usuario};
+        gestorBD.obtenerProductos(criterioProducto, function (producto){
+            if (producto===null)
+                res.redirect("/systemError")
+            else {
+                let checkCompra = validadorProductos.checkCompra(req, res,producto[0]);
+                if (!checkCompra)
+                    return;
+                let comprador = {
+                    comprador: req.session.usuario
+                }
+                gestorBD.comprarProducto(criterioProducto, comprador, function (canciones) {
+                    if (canciones == null) {
+                        res.redirect("/systemError")
+                    } else {
+                        gestorBD.cobrar(criterioUsuario, producto[0].precio, function (resultado){
+                            if (resultado===null)
+                                res.redirect("/systemError");
+                            else{
+                                req.session.dinero=req.session.dinero-producto[0].precio
+                                res.redirect("/user/buyed");
+                            }
+
+                        });
+
+                    }
+                });
+            }
+
+        });
+
     });
 };

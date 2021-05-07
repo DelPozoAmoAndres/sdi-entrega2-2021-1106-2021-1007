@@ -33,7 +33,7 @@ module.exports = function (app, swig, gestorBD) {
                         rol: req.session.rol,
                         dinero: req.session.dinero,
                     }
-                    let respuesta = swig.renderFile('vistas/registro.html', {
+                    let respuesta = swig.renderFile('vistas/productsBuyed.html', {
                         ofertas: compras,
                         userSession: usuario
                     })

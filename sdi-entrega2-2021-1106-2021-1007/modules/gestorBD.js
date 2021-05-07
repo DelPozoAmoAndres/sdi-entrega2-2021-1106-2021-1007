@@ -106,8 +106,40 @@ module.exports = {
             }
         });
     },
-    obtenerProductosPg: function (criterio, pg, funcionCallback) {
+    comprarProducto: function (criterio, comprador, funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('productos');
+                collection.update(criterio, {$set: comprador}, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                });
+            }
+        });
+    },
+    cobrar: function (criterio, dinero, funcionCallback){
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                collection = db.collection('usuarios');
+                collection.update(criterio, {$inc: { dinero : -dinero }}, function (err, result) {
+                    if (err)
+                        funcionCallback(null)
+                    else
+                        funcionCallback(result)
+                });
+                db.close();
+            }
+        });
+    },
+    obtenerProductosPg : function(criterio,pg,funcionCallback){
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
@@ -126,7 +158,7 @@ module.exports = {
             }
         });
     },
-    obtenerCompras: function (criterio, functionCallback) {
+    obtenerCompras: function (criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);

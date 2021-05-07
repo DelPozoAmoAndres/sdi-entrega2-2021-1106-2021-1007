@@ -48,7 +48,6 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null || usuarios.length == 0) {
                 req.session.usuario = null;
-                req.session.rol = usuarios[0].rol;
                 res.redirect("/login" +
                     "?mensaje=Email o password incorrecto" +
                     "&tipoMensaje=alert-danger ");

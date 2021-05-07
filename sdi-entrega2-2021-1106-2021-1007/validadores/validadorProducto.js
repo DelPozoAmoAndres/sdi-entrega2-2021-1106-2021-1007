@@ -15,5 +15,14 @@ module.exports = {
         else
             return true;
         return false;
+    },
+    checkCompra: function (req, res, producto){
+        if (producto.precio>req.session.dinero)
+            res.redirect("/tienda?mensaje=No tienes suficiente saldo&tipoMensaje=alert-danger")
+        else if (producto.autor===req.session.usuario)
+            res.redirect("/tienda?mensaje=No puedes comprar esta oferta porque eres el propietario&tipoMensaje=alert-danger")
+        else
+            return true;
+        return false;
     }
 }
