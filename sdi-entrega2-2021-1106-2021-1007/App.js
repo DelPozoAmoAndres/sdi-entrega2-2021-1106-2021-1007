@@ -36,7 +36,7 @@ app.set('clave', 'abcdefg');
 
 //Routers-----------------------------
 // routerUsuarioSession
-var routerUsuarioSession = express.Router();
+let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function (req, res, next) {
     if (req.session.usuario) {
         // dejamos correr la petición
@@ -99,7 +99,6 @@ routerUsuarioToken.use(function (req, res, next) {
                     error: 'Token invalido o caducado'
                 });
                 // También podríamos comprobar que intoToken.usuario existe
-                return;
 
             } else {
                 // dejamos correr la petición

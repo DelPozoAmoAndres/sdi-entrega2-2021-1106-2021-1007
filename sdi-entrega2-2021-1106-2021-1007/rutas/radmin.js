@@ -32,7 +32,7 @@ module.exports = function (app, swig, gestorBD) {
         //lista de usuarios haciendo uso de split
         let users = lista.lista.split(",")
         //bucle para recorrer los usuarios a eliminar y hacer eliminacion en cascada
-        for (i = 0; i < users.length; i++) {
+        for (let i = 0; i < users.length; i++) {
             //criterio para eliminar usuario por id
             let criterioUsuario = {"_id": gestorBD.mongo.ObjectID(users[i])}
             //metodo de la base de datos para obtener al usuario por el criterio dado
@@ -42,7 +42,6 @@ module.exports = function (app, swig, gestorBD) {
                     //redireccionamos a la vista de error
                     res.redirect("/systemError")
                     console.log("Error al obtener usuario")
-                    return
                 } else {
                     //metodo de la base de datos para eliminar al usuario por el criterio dado
                     gestorBD.eliminarUsuario(criterioUsuario, function (usuariosfinales) {
@@ -51,7 +50,6 @@ module.exports = function (app, swig, gestorBD) {
                             //redireccionamos a la vista de error
                             res.redirect("/systemError")
                             console.log("Error al eliminar usuario")
-                            return
                         } else {
                             console.log("Eliminacion correcta del usuario")
                             //criterio para obtener los productos por email
@@ -63,11 +61,10 @@ module.exports = function (app, swig, gestorBD) {
                                     //redireccionamos a la vista de error
                                     res.redirect("/systemError")
                                     console.log("Error al listar productos del usuario")
-                                    return
                                 } else {
                                     console.log("Listado correcto de los productos")
                                     //bucle para recorrer la lista de productos
-                                    for (j = 0; j < productos.length; j++) {
+                                    for (let j = 0; j < productos.length; j++) {
                                         //criterio para eliminar el producto
                                         let criterioProducto = {"_id": gestorBD.mongo.ObjectID(productos[j]._id)};
                                         //metodo de la base de datos para eliminar un producto por el criterio antes dado
@@ -77,7 +74,6 @@ module.exports = function (app, swig, gestorBD) {
                                                 //redireccionamos a la vista de error
                                                 res.redirect("/systemError")
                                                 console.log("Error al eliminar productos del usuario")
-                                                return;
                                             }
                                         })
                                     }

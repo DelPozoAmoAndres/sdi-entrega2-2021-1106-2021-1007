@@ -7,7 +7,7 @@ module.exports = function (app, gestorBD) {
             email: req.body.email,
             password: seguro
         }
-        if (criterio.email == undefined || criterio.email.length == 0 || seguro.length == 0) {
+        if (criterio.email===undefined || criterio.email.length===0 || seguro.length===0){
             res.status(500);
             res.json({
                 error: "se ha producido un error de validacion"
@@ -15,8 +15,8 @@ module.exports = function (app, gestorBD) {
             return;
         }
 
-        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-            if (usuarios == null || usuarios.length == 0) {
+        gestorBD.obtenerUsuarios(criterio, function (usuarios){
+            if (usuarios==null || usuarios.length===0) {
                 res.status(40); //Unauthorized
                 res.json({
                     autenticado: false

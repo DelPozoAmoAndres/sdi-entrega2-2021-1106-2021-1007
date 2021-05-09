@@ -38,9 +38,9 @@ module.exports = {
     },
     checkEliminar: function (req, res, producto){
         //Si el producto a eliminar no es propiedad de quien esta registrado o esta vendido
-        if (producto.autor!=req.session.usuario) {
+        if (producto.autor!==req.session.usuario) {
             res.redirect("/home?mensaje=No puedes borrar esta ofera porque no eres el propietario")
-        } else if (producto.comprador!=undefined)
+        } else if (producto.comprador!==undefined)
             res.redirect("/home?mensaje=No puedes borrar esta ofera porque ya se ha vendido")
         else
             return false;

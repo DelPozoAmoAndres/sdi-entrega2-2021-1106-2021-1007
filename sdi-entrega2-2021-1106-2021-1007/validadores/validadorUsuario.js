@@ -6,7 +6,7 @@ module.exports = {
 //metodo para verificar valores introducidos al intentar registrarse un usuario
     registro: function (req, res,functionCallback) {
         let criterio = {'email': req.body.email}
-        var error=true;
+        let error = true;
         this.gestorBD.obtenerUsuarios(criterio, function (resultado) {
             if (resultado.length > 0) {
                 console.log("Usuario duplicado")

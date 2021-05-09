@@ -50,10 +50,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
             if (prod)
                 res.redirect("/systemError")
             //Comprobamos que el producto a borrar no esté comprado y sea propiedad del usuario autenticado
-            else if (!validadorProductos.checkEliminar(req, res, prod[0])){
-                return;
-            }
-            else {
+            else if (validadorProductos.checkEliminar(req, res, prod[0])){
                 //Acceso a base de datos para borrar el producto
                 gestorBD.eliminarProducto(criterio, function (productos) {
                     if (productos == null) { //Si da error vamos a la pagina de error
@@ -82,11 +79,12 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
         }
         //metodo de la base de datos para obtener todos los productos que cumplan el criterio anterior
         gestorBD.obtenerProductos(criterio, function (destacados) {
+            let criterio2;
             if (destacados == null)
                 res.redirect("/systemError");
             else {
                 //comprobamos si hemos hecho una busqueda de un producto por una palabra clave
-                if (req.query.busqueda != null && req.query.busqueda != "") {
+                if (req.query.busqueda != null && req.query.busqueda !== "") {
                     //criterio para obtener los productos que tengan relación con la palabra clave,
                     // que no sean del usuario que visita la tienda y que no sean destacadas
                     criterio2 = {
@@ -97,7 +95,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                                 {"destacada": {$exists: false}}
                             ]
                     };
-                //si no se ha realizado ninguna busqueda
+                    //si no se ha realizado ninguna busqueda
                 } else {
                     //criterio para obtener los productos que no sean del usuario que visita la tienda y
                     // que no sean destacadas

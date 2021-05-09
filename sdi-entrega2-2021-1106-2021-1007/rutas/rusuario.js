@@ -52,7 +52,7 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
         }
         //metodo de la base de datos para saber si existe un usuario que coincide con el criterio anterior
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-            if (usuarios == null || usuarios.length == 0) {
+            if (usuarios == null || usuarios.length === 0) {
                 req.session.usuario = null;
                 res.redirect("/login" +
                     "?mensaje=Email o password incorrecto" +
@@ -82,10 +82,10 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
         let criterio = {"email":req.session.usuario}
         //metodo para obtener el usuario en sesion con el criterio antes definido
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-            if (usuarios == null || usuarios.length == 0) {
+            if (usuarios == null || usuarios.length === 0) {
                 res.redirect("/systemError");
             // en caso de admin
-            } else if (usuarios[0].rol == "Usuario Administrador") {
+            } else if (usuarios[0].rol === "Usuario Administrador") {
                 req.session.usuario = usuarios[0].email;
                 req.session.rol = usuarios[0].rol;
                 res.redirect("/homeAdmin");

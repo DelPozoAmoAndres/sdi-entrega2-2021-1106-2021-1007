@@ -127,7 +127,7 @@ module.exports = {
             if (err) {
                 funcionCallback(null);
             } else {
-                collection = db.collection('usuarios');
+                let collection = db.collection('usuarios');
                 collection.update(criterio, {$inc: { dinero : -dinero }}, function (err, result) {//Quitamos el precio de la accion
                     if (err)
                         funcionCallback(null)
@@ -161,7 +161,7 @@ module.exports = {
     marcarDestacado:function (criterio,values,functionCallback) {//Marca como destacado una oferta
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
-                funcionCallback(null);
+                functionCallback(null);
             } else {
                 let collection = db.collection('productos');
                 let newValues={$set: values}
