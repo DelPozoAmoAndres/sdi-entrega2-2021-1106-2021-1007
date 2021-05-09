@@ -31,7 +31,11 @@
             {% else %}
             <td><a href="/product/distinguish/{{ oferta._id.toString() }}" class="btn btn-primary">Destacar</a></td>
             {% endif %}
+            {% if oferta.comprador %}
+            <td><span>Vendido</span></td>
+            {% else %}
             <td><a href="/product/delete/{{ oferta._id.toString() }}" class="btn btn-primary">Eliminar</a></td>
+            {% endif %}
         </tr>
 
         {% endfor %}
