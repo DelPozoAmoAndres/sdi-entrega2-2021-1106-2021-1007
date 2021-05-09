@@ -5,7 +5,7 @@ module.exports = {
         this.mongo = mongo;
         this.app = app;
     },
-    insertarUsuario: function (usuario, funcionCallback) {
+    insertarUsuario: function (usuario, funcionCallback) { //Funcion de registro en BD
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
@@ -22,7 +22,7 @@ module.exports = {
             }
         });
     },
-    obtenerUsuarios: function (criterio, funcionCallback) {
+    obtenerUsuarios: function (criterio, funcionCallback) {//Funcion de login desde BD
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
@@ -39,7 +39,7 @@ module.exports = {
             }
         });
     },
-    eliminarUsuario: function (usuario, funcionCallback) {
+    eliminarUsuario: function (usuario, funcionCallback) {//Funcion de bvorrado de usuarios solo disponible por el admin
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
@@ -56,7 +56,7 @@ module.exports = {
             }
         });
     },
-    insertarProducto: function (producto, functionCallback) {
+    insertarProducto: function (producto, functionCallback) {//Funcion de añadir un producto en BD
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 functionCallback(null);
@@ -73,7 +73,7 @@ module.exports = {
             }
         });
     },
-    obtenerProductos: function (criterio, functionCallback) {
+    obtenerProductos: function (criterio, functionCallback) {//Obtencion de los productos disponibles segun el criterio
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 functionCallback(null);
@@ -89,7 +89,7 @@ module.exports = {
             }
         });
     },
-    eliminarProducto: function (criterio, funcionCallback) {
+    eliminarProducto: function (criterio, funcionCallback) {//Borrado de productos en BD
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
@@ -106,7 +106,7 @@ module.exports = {
             }
         });
     },
-    comprarProducto: function (criterio, comprador, funcionCallback){
+    comprarProducto: function (criterio, comprador, funcionCallback){//Comprado de producto (actualiza la coleccion de productos añadiendo un comprador)
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
@@ -122,13 +122,13 @@ module.exports = {
             }
         });
     },
-    cobrar: function (criterio, dinero, funcionCallback){
+    cobrar: function (criterio, dinero, funcionCallback){//Funcion de cobrar. Se usa cuando se compra una oferta y cuando se destaca
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
                 collection = db.collection('usuarios');
-                collection.update(criterio, {$inc: { dinero : -dinero }}, function (err, result) {
+                collection.update(criterio, {$inc: { dinero : -dinero }}, function (err, result) {//Quitamos el precio de la accion
                     if (err)
                         funcionCallback(null)
                     else
@@ -138,7 +138,7 @@ module.exports = {
             }
         });
     },
-    obtenerProductosPg : function(criterio,pg,funcionCallback){
+    obtenerProductosPg : function(criterio,pg,funcionCallback){//Obtiene los productos de la tieda de forma paginada
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
                 funcionCallback(null);
@@ -158,7 +158,7 @@ module.exports = {
             }
         });
     },
-    marcarDestacado:function (criterio,values,functionCallback) {
+    marcarDestacado:function (criterio,values,functionCallback) {//Marca como destacado una oferta
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);

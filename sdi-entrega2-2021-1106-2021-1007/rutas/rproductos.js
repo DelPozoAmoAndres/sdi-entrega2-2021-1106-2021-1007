@@ -41,17 +41,27 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                 res.redirect("/home?mensaje=Oferta añadida correctamente");
         });
     });
-    //ruta get para eliminar un producto
+    //Ruta get para eliminar un producto
     app.get("/product/delete/:id", function (req, res) {
         //criterio del producto a eliminar
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
-        //metodo de la base de datos que elimina un producto que cumple el criterio anterior
-        gestorBD.eliminarProducto(criterio, function (productos) {
-            if (productos == null) {
-                res.redirect("/systemError");
-            } else {
-                //redirigiendonos a la vista correspondiente
-                res.redirect("/home");
+        //Acceso a base de datos para obtener el producto a borrar y poder validarlo
+        gestorBD.obtenerProductos(criterio, function (prod){
+            if (prod)
+                res.redirect("/systemError")
+            //Comprobamos que el producto a borrar no esté comprado y sea propiedad del usuario autenticado
+            else if (!validadorProductos.checkEliminar(req, res, prod[0])){
+                return;
+            }
+            else {
+                //Acceso a base de datos para borrar el producto
+                gestorBD.eliminarProducto(criterio, function (productos) {
+                    if (productos == null) { //Si da error vamos a la pagina de error
+                        res.redirect("/systemError");
+                    } else { //si se ha eliminado bien volvemos a mostrar las ofertas del usuario
+                        res.redirect("/home");
+                    }
+                });
             }
         });
     });
