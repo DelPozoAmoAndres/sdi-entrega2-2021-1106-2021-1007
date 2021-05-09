@@ -1,10 +1,10 @@
 module.exports = function (app, swig, gestorBD, validadorUsuario) {
-    //metodo que se ejecutará una vez se quiera ver el formulario de registro para crear un usuario
+    //ruta get para ver el formulario de registro para crear un usuario
     app.get("/registrarse", function (req, res) {
         let respuesta = swig.renderFile('vistas/registro.html', {});
         res.send(respuesta);
     });
-    //metodo que se ejecutará una vez se intente crear un usuario con los datos introducidos
+    //ruta post para registrarse
     app.post("/registrarse", async function (req, res) {
         //comprobar si hay errores al introducir los valores
         validadorUsuario.registro(req, res, function (result){
@@ -23,53 +23,77 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
                 }
                 //insertamos el usuario en base de datos para poder iniciar sesión posteriormente
                 gestorBD.insertarUsuario(usuario, function (id) {
-                    //si se produjo un error
+                    //si se produjo un error notificar
                     if (id == null) {
                         res.redirect("/registrarse?mensaje=Error al registrar usuario")
                     } else {
-                        res.redirect("/login?mensaje=Nuevo usuario registrado")
+                        //redireccionar al home haciendo autologin
+                        res.redirect("/home?mensaje=Nuevo usuario registrado")
                     }
                 });
             }
         })
     });
+    //ruta get para ver el formulario del login
     app.get("/login", function (req, res) {
         let respuesta = swig.renderFile('vistas/blogin.html', {});
         res.send(respuesta);
     });
-
+    //ruta post para identificarnos
     app.post("/login", function (req, res) {
+        //creamos el hash de la contraseña introducida
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
+        //criterio por el cual buscaremos si un ususario coincide con el email y el hash obtenido de la contraseña
         let criterio = {
             email: req.body.email,
             password: seguro
         }
+        //metodo de la base de datos para saber si existe un usuario que coincide con el criterio anterior
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null || usuarios.length == 0) {
                 req.session.usuario = null;
                 res.redirect("/login" +
                     "?mensaje=Email o password incorrecto" +
                     "&tipoMensaje=alert-danger ");
-            } else if (usuarios[0].rol == "Usuario Administrador") {
-                req.session.usuario = usuarios[0].email;
-                req.session.rol = usuarios[0].rol;
-                res.redirect("/homeAdmin");
-            } else {
-                req.session.usuario = usuarios[0].email;
-                req.session.rol = usuarios[0].rol;
-                req.session.dinero = usuarios[0].dinero;
-                res.redirect("/home");
+            } else{
+                //redirigirle a la vista correcta
+                res.redirect("/home")
             }
         });
     });
-
+    //ruta get para cerrar sesion
     app.get("/logout", function (req, res) {
         req.session=null;
         res.redirect("/login")
     });
-
+    //ruta raiz para ir directamente al login o al home en caso de tener sesion abierta
     app.get("/", function (req, res) {
-        res.redirect("/login")
+        if(req.session.usuario!=null)
+            res.send("/home")
+        else
+            res.send("/login")
+    });
+    //ruta get para ver la vista correspondiente ya seas admin o usuario estandar
+    app.get("/home", function (req, res) {
+        //criterio por el cual buscaremos al usuario
+        let criterio = {"email":req.session.usuario}
+        //metodo para obtener el usuario en sesion con el criterio antes definido
+        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+            if (usuarios == null || usuarios.length == 0) {
+                res.redirect("/systemError");
+            // en caso de admin
+            } else if (usuarios[0].rol == "Usuario Administrador") {
+                req.session.usuario = usuarios[0].email;
+                req.session.rol = usuarios[0].rol;
+                res.redirect("/homeAdmin");
+            // en caso de usuario estandar
+            } else {
+                req.session.usuario = usuarios[0].email;
+                req.session.rol = usuarios[0].rol;
+                req.session.dinero = usuarios[0].dinero;
+                res.redirect("/homeUser");
+            }
+        });
     });
 }

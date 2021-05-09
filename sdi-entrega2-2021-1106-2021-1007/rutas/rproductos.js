@@ -41,18 +41,23 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                 res.redirect("/home?mensaje=Oferta añadida correctamente");
         });
     });
+    //ruta get para eliminar un producto
     app.get("/product/delete/:id", function (req, res) {
+        //criterio del producto a eliminar
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        //metodo de la base de datos que elimina un producto que cumple el criterio anterior
         gestorBD.eliminarProducto(criterio, function (productos) {
             if (productos == null) {
                 res.redirect("/systemError");
             } else {
+                //redirigiendonos a la vista correspondiente
                 res.redirect("/home");
             }
         });
     });
-
+    //ruta get para listar todos los productos
     app.get("/tienda", function (req, res) {
+        //creamos un criterio para obtener los productos destacados
         let criterio = {
             $and:
                 [
@@ -60,15 +65,20 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                     {"destacada": {$exists: true}}
                 ]
         }
+        //control de paginado
         let pg = parseInt(req.query.pg); // Es String !!!
         if (req.query.pg == null) { // Puede no venir el param
             pg = 1;
         }
+        //metodo de la base de datos para obtener todos los productos que cumplan el criterio anterior
         gestorBD.obtenerProductos(criterio, function (destacados) {
             if (destacados == null)
                 res.redirect("/systemError");
             else {
+                //comprobamos si hemos hecho una busqueda de un producto por una palabra clave
                 if (req.query.busqueda != null && req.query.busqueda != "") {
+                    //criterio para obtener los productos que tengan relación con la palabra clave,
+                    // que no sean del usuario que visita la tienda y que no sean destacadas
                     criterio2 = {
                         $and:
                             [
@@ -77,7 +87,10 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                                 {"destacada": {$exists: false}}
                             ]
                     };
+                //si no se ha realizado ninguna busqueda
                 } else {
+                    //criterio para obtener los productos que no sean del usuario que visita la tienda y
+                    // que no sean destacadas
                     criterio2 = {
                         $and:
                             [
@@ -86,10 +99,12 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                             ]
                     };
                 }
+                //metodo que obtiene los productos que entran en una pag y que coinciden con el criterio definido
                 gestorBD.obtenerProductosPg(criterio2, pg, function (productos, total) {
                     if (productos == null)
                         res.redirect("/systemError");
                     else {
+                        //parametros para crear bien la lista de paginas disponibles
                         let ultimaPg = total / 5;
                         if (total % 5 > 0) { // Sobran decimales
                             ultimaPg = ultimaPg + 1;
@@ -119,21 +134,32 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
             }
         })
     });
+    //ruta get para marcar como destacado un producto
     app.get("/product/distinguish/:id", function (req, res) {
+        //criterio para saber que producto marcar como destacado
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        //criterio para cobrar el dinero al usuario definido
         let criterio2 = {"email": req.session.usuario}
+        //nuevo valor que le tenemos que introducir al producto en la base de datos
         let values = {"destacada": true}
+        //comprobamos que el usuario tiene suficiente dinero para destacar el producto
         if (validadorProductos.checkSaldo(req, res, "/home", 20))
+            //metodo de la base de datos para descontar el dinero de su cuenta
             gestorBD.cobrar(criterio2, 20, function (usuario) {
                 if (usuario == null) {
                     res.redirect("/systemError")
                 } else {
+                    //metodo de la base de datos para marcar como destacado el producto que cumple el criterio
                     gestorBD.marcarDestacado(criterio, values, function (producto) {
+                        //en caso de haber algun problema al marcarlo como destacado
                         if (producto == null) {
+                            //devolver el dinero al usuario
                             gestorBD.cobrar(criterio2, -20, function (usuario) {
                                 if (usuario == null) {
                                     res.redirect("/systemError")
                                 }
+                                res.redirect("/home?mensaje=Se ha producido un problema al " +
+                                    "marcar como destacada dicho producto, intentelo más tarde")
                             })
                         } else {
                             req.session.dinero = req.session.dinero - 20
@@ -143,24 +169,31 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                 }
             })
     });
-
+    //ruta gert para comprar un producto
     app.get("/product/buy/:id", function (req, res) {
+        //criterio para comprar el producto
         let criterioProducto = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
+        //criterio para cobrar el dinero al comprador
         let criterioUsuario = {"email": req.session.usuario};
+        //metodo de la base de datos para obtener el producto a comprar
         gestorBD.obtenerProductos(criterioProducto, function (producto) {
             if (producto === null)
                 res.redirect("/systemError")
             else {
+                //comprobamos que hay dinero suficiente para realizar la compra
                 let checkCompra = validadorProductos.checkCompra(req, res, producto[0]);
                 if (!checkCompra)
                     return;
+                //nuevo atributo a insertar en el producto comprado
                 let comprador = {
                     comprador: req.session.usuario
                 }
+                //metodo de la base de datos para insertar en el producto un nuevo atributo
                 gestorBD.comprarProducto(criterioProducto, comprador, function (canciones) {
                     if (canciones == null) {
                         res.redirect("/systemError")
                     } else {
+                        //metodo de la base de datos para cobrar el dinero del producto
                         gestorBD.cobrar(criterioUsuario, producto[0].precio, function (resultado) {
                             if (resultado === null)
                                 res.redirect("/systemError");

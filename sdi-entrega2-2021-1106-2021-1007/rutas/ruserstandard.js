@@ -1,8 +1,11 @@
 module.exports = function (app, swig, gestorBD) {
-    app.get("/home", function (req, res) {
+    //ruta get para ver la vista usuario estandar
+    app.get("/homeUser", function (req, res) {
+        // criterio para obtener los productos de un usuario
         let criterio = {
             autor: req.session.usuario
         }
+        //metodo de la base de datos que nos devuelve la lista de productos que coinciden con el criterio anterior
         gestorBD.obtenerProductos(criterio, function (productos) {
             if (productos == null)
                 res.redirect("/systemError")
@@ -12,6 +15,7 @@ module.exports = function (app, swig, gestorBD) {
                     rol: req.session.rol,
                     dinero: req.session.dinero,
                 }
+                //renderizamos la vista homeStandard y pasandole por sesion la lista de productos y el usuario
                 let respuesta = swig.renderFile('vistas/homeStandard.html', {
                     userSession: usuario,
                     productos: productos
@@ -20,10 +24,13 @@ module.exports = function (app, swig, gestorBD) {
             }
         });
     });
+    // ruta get para listar las compras realizadas
     app.get("/user/buyed", function (req, res) {
+        // criterio para obtener los productos comprados de un usuario
         let criterio = {
             comprador: req.session.usuario
         }
+        //metodo para obtener los productos que ha comprado un usuario especificado por el criterio dado
         gestorBD.obtenerProductos(criterio, function (compras) {
                 if (compras == null)
                     res.redirect("/systemError")
