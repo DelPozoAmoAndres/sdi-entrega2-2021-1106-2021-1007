@@ -28,6 +28,7 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
                         res.redirect("/registrarse?mensaje=Error al registrar usuario")
                     } else {
                         //redireccionar al home haciendo autologin
+                        req.session.usuario=usuario.email
                         res.redirect("/home?mensaje=Nuevo usuario registrado")
                     }
                 });
@@ -57,6 +58,7 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
                     "?mensaje=Email o password incorrecto" +
                     "&tipoMensaje=alert-danger ");
             } else{
+                req.session.usuario =usuarios[0].email
                 //redirigirle a la vista correcta
                 res.redirect("/home")
             }
@@ -70,9 +72,9 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
     //ruta raiz para ir directamente al login o al home en caso de tener sesion abierta
     app.get("/", function (req, res) {
         if(req.session.usuario!=null)
-            res.send("/home")
+            res.redirect("/home")
         else
-            res.send("/login")
+            res.redirect("/login")
     });
     //ruta get para ver la vista correspondiente ya seas admin o usuario estandar
     app.get("/home", function (req, res) {
