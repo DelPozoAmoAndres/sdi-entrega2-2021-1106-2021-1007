@@ -1,6 +1,8 @@
 package com.uniovi;
 
 import org.bson.Document;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,22 +15,24 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.uniovi.pageobjects.PO_LoginView;
+import com.uniovi.pageobjects.PO_RegisterView;
 
 @SpringBootTest
 public class SdiEntrega2Test2021110620211007ApplicationTests {
 
 	// Rutas para gecko y firefox
 	// Sergio
-//	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-//	static String Geckdriver024 = "C:\\Users\\sergi\\Documents\\geckodriver024win64.exe";
+	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+	static String Geckdriver024 = "C:\\Users\\sergi\\Documents\\geckodriver024win64.exe";
 	
 	// Rutas Andres.
-		static String PathFirefox65 = "C:\\Program Files (x86)\\Mozilla Firefox2\\firefox.exe";
-		static String Geckdriver024 = "C:\\Users\\ANDRES_JR\\Documents\\UNIOVI\\SDI\\LABS\\geckodriver.exe";
+//		static String PathFirefox65 = "C:\\Program Files (x86)\\Mozilla Firefox2\\firefox.exe";
+//		static String Geckdriver024 = "C:\\Users\\ANDRES_JR\\Documents\\UNIOVI\\SDI\\LABS\\geckodriver.exe";
 	
 
 	static WebDriver driver = getDriver(PathFirefox65, Geckdriver024);
-	static String URL = "http://localhost:3000";
+	static String URL = "http://localhost:3000/";
 
 	static MongoDatabase db;
 	
@@ -59,6 +63,19 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		driver.navigate().to(URL);
 	}
 
+	// Después de cada prueba se borran las cookies del navegador
+	@After
+	public void tearDown() {
+		driver.manage().deleteAllCookies();
+	}
+	
+	// Al finalizar la última prueba
+	@AfterClass
+	static public void end() {
+		// Cerramos el navegador al finalizar las pruebas
+		driver.quit();
+	}
+	
 	private void init() {
 		//Eliminamos las colecciones existentes
 		db.getCollection("usuarios").drop();
@@ -73,7 +90,7 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		db.getCollection("usuarios").insertOne(usuario);
 		usuario = new Document().append("email", "sergio@email.com").append("nombre", "Sergio").append("apellidos", "Mate Suarez").append("dinero", 80).append("password", "1cc9619256c0cef03e148a99756c06ccd6364ec63a08fac31e85ffa8276d805e").append("rol", "Usuario Estandar");
 		db.getCollection("usuarios").insertOne(usuario);
-		usuario = new Document().append("email", "andres@developer.com").append("nombre", "Andres").append("apellidos", "Developer").append("dinero", 80).append("password", "a0fcffb4e8ff04f20c7ac02e890d365d8daf0439098b48d61fb0287fb83856ce").append("rol", "Usuario Estandar");
+		usuario = new Document().append("email", "andres@developer.com").append("nombre", "Andres").append("apellidos", "Developer").append("dinero", 80).append("password", "1cc9619256c0cef03e148a99756c06ccd6364ec63a08fac31e85ffa8276d805e").append("rol", "Usuario Estandar");
 		db.getCollection("usuarios").insertOne(usuario);
 		usuario = new Document().append("email", "prueba@developer.com").append("nombre", "Prueba").append("apellidos", "Developer").append("dinero", 100).append("password", "1cc9619256c0cef03e148a99756c06ccd6364ec63a08fac31e85ffa8276d805e").append("rol", "Usuario Estandar");
 		db.getCollection("usuarios").insertOne(usuario);
@@ -100,8 +117,53 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 	
 
 	@Test
-	public void contextLoads() {
-		System.out.println("HOLA");
+	public void Prueba1() {
+		//Rellenamos el formulario de registro con datos correctos
+		PO_RegisterView.register(driver, "nuevo@email.com", "nuevo", "usuario", "contraseña", "contraseña");
+		//Comprobamos que hemos entrado en la pagina de inicio
+		PO_RegisterView.expectingText(driver, "Vista de usuario");
+	}
+	
+	@Test
+	public void Prueba2() {
+		//Rellenamos el formulario de registro con datos incorrectos (email, nombre y apellidos vacios)
+		PO_RegisterView.register(driver, " ", " ", " ", "contraseña", "contraseña");
+		//Comprobamos que no hemos entrado en la pagina de inicio
+		PO_RegisterView.error(driver, "Email está vacio");
+		
+		//Rellenamos el formulario de registro con datos incorrectos (nombre y apellidos vacios)
+		PO_RegisterView.register(driver, "nuevo@email.com", " ", " ", "contraseña", "contraseña");
+		//Comprobamos que no hemos entrado en la pagina de inicio
+		PO_RegisterView.error(driver, "Nombre está vacio");
+		
+		//Rellenamos el formulario de registro con datos incorrectos (apellidos vacios)
+		PO_RegisterView.register(driver, "nuevo@email.com", "Nombre", " ", "contraseña", "contraseña");
+		//Comprobamos que no hemos entrado en la pagina de inicio
+		PO_RegisterView.error(driver, "Apellidos está vacio");
+	}
+	
+	@Test
+	public void Prueba3() {
+		//Rellenamos el formulario de registro con datos incorrectos (las contraseñas no coinciden)
+		PO_RegisterView.register(driver, "nuevo@email.com", "nuevo", "usuario", "contraseña", "contraseñaIncorrecta");
+		//Comprobamos que no hemos entrado en la pagina de inicio
+		PO_RegisterView.error(driver, "No coinciden las contraseñas");
+	}
+	
+	@Test
+	public void Prueba4() {
+		//Rellenamos el formulario de registro con datos incorrectos (las contraseñas no coinciden)
+		PO_RegisterView.register(driver, "sergio@email.com", "nuevo", "usuario", "contraseña", "contraseña");
+		//Comprobamos que no hemos entrado en la pagina de inicio
+		PO_RegisterView.error(driver, "Email ya usado");
+	}
+	
+	@Test 
+	public void Prueba5() {
+		//Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "sergio@email.com", "00000000");
+		//Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
 	}
 
 }

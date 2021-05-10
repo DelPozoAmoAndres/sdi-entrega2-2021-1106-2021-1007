@@ -37,10 +37,10 @@
                     <li><a>{{userSession.email}}</a></li>
                     <li><a>{{userSession.dinero}}€</a></li>
                     {% endif %}
-                    <li><a href="/logout"><span class="glyphicon glyphicon-user"></span>Logout</a></li>
+                    <li><a href="/logout"><span name="Logout" class="glyphicon glyphicon-user"></span>Logout</a></li>
                 {% else %}
-                    <li><a href="/registrarse"><span class="glyphicon glyphicon-user"></span> Registrate</a></li>
-                    <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
+                    <li><a href="/registrarse"><span name="Registrarse" class="glyphicon glyphicon-user"></span> Registrate</a></li>
+                    <li><a href="/login"><span name="Login" class="glyphicon glyphicon-log-in"></span> Identifícate</a></li>
                 {% endif %}
             </ul>
         </div>

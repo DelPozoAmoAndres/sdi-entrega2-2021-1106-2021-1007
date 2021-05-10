@@ -52,6 +52,7 @@ app.use("/user/*", routerUsuarioSession);
 app.use("/tienda", routerUsuarioSession);
 app.use("/admin/*", routerUsuarioSession);
 
+
 // router usuario estandar
 let routerUsuarioStandard = express.Router();
 routerUsuarioStandard.use(function (req, res, next) {
@@ -64,7 +65,6 @@ routerUsuarioStandard.use(function (req, res, next) {
         }
     });
 });
-app.use("/home", routerUsuarioStandard);
 app.use("/product/*", routerUsuarioStandard);
 app.use("/user/*", routerUsuarioStandard);
 app.use("/tienda", routerUsuarioStandard);
