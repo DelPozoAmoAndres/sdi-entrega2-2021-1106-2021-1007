@@ -46,19 +46,23 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
         //criterio del producto a eliminar
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         //Acceso a base de datos para obtener el producto a borrar y poder validarlo
-        gestorBD.obtenerProductos(criterio, function (prod){
-            if (prod)
+        gestorBD.obtenerProductos(criterio, function (prod) {
+            if (prod === null)
                 res.redirect("/systemError")
             //Comprobamos que el producto a borrar no esté comprado y sea propiedad del usuario autenticado
-            else if (validadorProductos.checkEliminar(req, res, prod[0])){
-                //Acceso a base de datos para borrar el producto
-                gestorBD.eliminarProducto(criterio, function (productos) {
-                    if (productos == null) { //Si da error vamos a la pagina de error
-                        res.redirect("/systemError");
-                    } else { //si se ha eliminado bien volvemos a mostrar las ofertas del usuario
-                        res.redirect("/home");
-                    }
-                });
+            else {
+                if (validadorProductos.checkEliminar(req, res, prod[0])) {
+                    //Acceso a base de datos para borrar el producto
+                    gestorBD.eliminarProducto(criterio, function (productos) {
+                        if (productos == null) { //Si da error vamos a la pagina de error
+                            res.redirect("/systemError");
+                        } else { //si se ha eliminado bien volvemos a mostrar las ofertas del usuario
+                            res.redirect("/home");
+                        }
+                    });
+                } else {
+                    res.redirect("/systemError")
+                }
             }
         });
     });

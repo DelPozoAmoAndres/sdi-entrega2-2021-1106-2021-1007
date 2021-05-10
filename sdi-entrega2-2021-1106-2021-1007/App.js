@@ -47,6 +47,7 @@ routerUsuarioSession.use(function (req, res, next) {
 });
 app.use("/home", routerUsuarioSession);
 app.use("/homeAdmin", routerUsuarioSession);
+app.use("/homeUser", routerUsuarioSession);
 app.use("/product/*", routerUsuarioSession);
 app.use("/user/*", routerUsuarioSession);
 app.use("/tienda", routerUsuarioSession);
@@ -66,6 +67,7 @@ routerUsuarioStandard.use(function (req, res, next) {
     });
 });
 app.use("/product/*", routerUsuarioStandard);
+app.use("/homeUser", routerUsuarioStandard);
 app.use("/user/*", routerUsuarioStandard);
 app.use("/tienda", routerUsuarioStandard);
 
