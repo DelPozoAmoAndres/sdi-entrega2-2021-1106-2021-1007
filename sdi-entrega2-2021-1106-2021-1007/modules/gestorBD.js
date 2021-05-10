@@ -106,7 +106,7 @@ module.exports = {
             }
         });
     },
-    comprarProducto: function (criterio, comprador, funcionCallback){//Comprado de producto (actualiza la coleccion de productos añadiendo un comprador)
+    comprarProducto: function (criterio, comprador, funcionCallback) {//Comprado de producto (actualiza la coleccion de productos añadiendo un comprador)
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
@@ -122,13 +122,13 @@ module.exports = {
             }
         });
     },
-    cobrar: function (criterio, dinero, funcionCallback){//Funcion de cobrar. Se usa cuando se compra una oferta y cuando se destaca
+    cobrar: function (criterio, dinero, funcionCallback) {//Funcion de cobrar. Se usa cuando se compra una oferta y cuando se destaca
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
                 let collection = db.collection('usuarios');
-                collection.update(criterio, {$inc: { dinero : -dinero }}, function (err, result) {//Quitamos el precio de la accion
+                collection.update(criterio, {$inc: {dinero: -dinero}}, function (err, result) {//Quitamos el precio de la accion
                     if (err)
                         funcionCallback(null)
                     else
@@ -138,8 +138,8 @@ module.exports = {
             }
         });
     },
-    obtenerProductosPg : function(criterio,pg,funcionCallback){//Obtiene los productos de la tieda de forma paginada
-        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+    obtenerProductosPg: function (criterio, pg, funcionCallback) {//Obtiene los productos de la tieda de forma paginada
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
@@ -158,14 +158,14 @@ module.exports = {
             }
         });
     },
-    marcarDestacado:function (criterio,values,functionCallback) {//Marca como destacado una oferta
+    marcarDestacado: function (criterio, values, functionCallback) {//Marca como destacado una oferta
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 functionCallback(null);
             } else {
                 let collection = db.collection('productos');
-                let newValues={$set: values}
-                collection.updateOne(criterio,newValues,function(err,producto){
+                let newValues = {$set: values}
+                collection.updateOne(criterio, newValues, function (err, producto) {
                     if (err) {
                         functionCallback(null);
                     } else {
@@ -175,5 +175,22 @@ module.exports = {
                 });
             }
         })
+    },
+    obtenerMensajes: function (criterio, functionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                functionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.find(criterio).toArray(function (err, mensajes) {
+                    if (err) {
+                        functionCallback(null);
+                    } else {
+                        functionCallback(mensajes);
+                    }
+                    db.close();
+                });
+            }
+        });
     }
 }

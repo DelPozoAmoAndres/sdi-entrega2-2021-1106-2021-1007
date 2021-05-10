@@ -47,4 +47,9 @@ module.exports = function (app, gestorBD) {
             }
         });
     });
+
+    app.get("/api/chat/:id", function (req, res){
+        let criterio = {"chat": gestorBD.mongo.ObjectID(req.params.id)}
+
+    });
 }
