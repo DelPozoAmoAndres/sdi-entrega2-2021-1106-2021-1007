@@ -31,11 +31,8 @@ public class PO_LoginView extends PO_View {
 		driver.findElement(By.name("Login")).click();
 		fillForm(driver, emailp, passwordp);
 	}
-	static public void errorEmpty(WebDriver driver) {
-		PO_View.checkElement(driver, "text", "Campo sin rellenar");
-	}
-	static public void errorUserPasswNotMatch(WebDriver driver) {
-		PO_View.checkElement(driver, "text", "Email o contraseña incorrectos");
+	static public void error(WebDriver driver, String errorText) {
+		PO_View.checkElement(driver, "text", errorText);
 	}
 	static public void logout(WebDriver driver) {
 		By logout = By.name("Logout");
