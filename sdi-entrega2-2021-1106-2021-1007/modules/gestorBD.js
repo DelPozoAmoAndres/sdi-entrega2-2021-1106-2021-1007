@@ -176,6 +176,49 @@ module.exports = {
             }
         })
     },
+    obtenerConversaciones: function (criterio,chat, functionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                functionCallback(null);
+            } else {
+                let collection = db.collection('conversaciones');
+                collection.find(criterio).toArray(function (err, conversaciones) {
+                    if (err) {
+                        functionCallback(null);
+                    } else if (conversaciones.length === 0) {
+                        collection.insertOne(chat,function (err, conversaciones) {
+                            if (err) {
+                                functionCallback(null);
+                            } else {
+                                console.log(conversaciones)
+                                functionCallback(conversaciones.ops[0]._id)
+                            }
+                        })
+                    } else {
+                        functionCallback(conversaciones[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    insertarMensaje: function (mensaje, functionCallback) {//Funcion de añadir un producto en BD
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                functionCallback(null);
+            } else {
+                let collection = db.collection('mensajes');
+                collection.insertOne(mensaje, function (err, result) {
+                    if (err) {
+                        functionCallback(null);
+                    } else {
+                        functionCallback(result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
     obtenerMensajes: function (criterio, functionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
