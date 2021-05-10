@@ -2,7 +2,7 @@ module.exports = function (app, swig, gestorBD) {
     //ruta para ir a la vista privada del administrador
     app.get("/homeAdmin", function (req, res) {
         //criterio por el cual sacar los usuarios
-        let criterio = {'rol': 'Usuario Estándar'}
+        let criterio = {'rol': 'Usuario Estandar'}
         //método de la base de datos que saca los usuarios que cumplen dicha condiciones
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             //checkeamos que no hay ningun error o que la lista no esté vacia

@@ -57,7 +57,7 @@ let routerUsuarioStandard = express.Router();
 routerUsuarioStandard.use(function (req, res, next) {
     let criterio = {"email": req.session.usuario};
     gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-        if (usuarios[0].rol === "Usuario Estándar")
+        if (usuarios[0].rol === "Usuario Estandar")
             next();
         else {
             res.redirect("/home");

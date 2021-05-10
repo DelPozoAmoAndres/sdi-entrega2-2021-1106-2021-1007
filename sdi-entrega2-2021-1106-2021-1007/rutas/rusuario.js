@@ -19,7 +19,7 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
                     apellidos: req.body.apellidos,
                     password: seguro,
                     dinero: 100.0,
-                    rol: "Usuario Estándar"
+                    rol: "Usuario Estandar"
                 }
                 //insertamos el usuario en base de datos para poder iniciar sesión posteriormente
                 gestorBD.insertarUsuario(usuario, function (id) {
