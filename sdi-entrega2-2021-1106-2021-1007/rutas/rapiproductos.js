@@ -106,9 +106,9 @@ module.exports = function (app, gestorBD) {
             }
         })
     });
-    app.get("/api/producto/chat/:idchat", function (req, res) {
+    app.get("/api/producto/chat/:id", function (req, res) {
         let criterio = {
-            "conversacion" : gestorBD.mongo.ObjectID(req.params.idchat)
+            "conversacion" : gestorBD.mongo.ObjectID(req.params.id)
         }
         gestorBD.obtenerMensajes(criterio, function (mensajes){
             if (mensajes==null){

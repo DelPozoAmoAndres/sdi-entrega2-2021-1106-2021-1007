@@ -1,6 +1,18 @@
 let express = require('express');
 let app = express();
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, UPDATE, PUT");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
+    // Debemos especificar todas las headers que se aceptan. Content-Type , token
+    next();
+});
+
+let fs = require('fs');
+let https = require('https');
+
 let swig = require('swig');
 let bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -25,7 +37,6 @@ app.use(expressSession({
 let mongo = require('mongodb');
 let gestorBD = require("./modules/gestorBD.js");
 gestorBD.init(app, mongo);
-app.set('port', 8081);
 app.set('db', 'mongodb://admin:admin@cluster0-shard-00-00.mssmg.mongodb.net:27017,cluster0-shard-00-01.mssmg.mongodb.net:27017,cluster0-shard-00-02.mssmg.mongodb.net:27017/MyWallapop?ssl=true&replicaSet=atlas-96ofd9-shard-0&authSource=admin&retryWrites=true&w=majority');
 
 
@@ -134,9 +145,14 @@ require("./rutas/rproductos")(app, swig, gestorBD, validadorProducto);
 //Rutas de la parte de API REST
 require("./rutas/rapiproductos")(app, gestorBD);
 
-let puerto = 3000;
+app.use(express.static('public')); //Para la parte del cliente
 
+app.set('port', 3000);
 
-app.listen(puerto, function () {
-    console.log("Servidor listo " + puerto);
+// Lanzar el servidor
+https.createServer({
+    key: fs.readFileSync('certificates/alice.key'),
+    cert: fs.readFileSync('certificates/alice.crt')
+}, app).listen(app.get('port'), function () {
+    console.log("Servidor activo");
 });
