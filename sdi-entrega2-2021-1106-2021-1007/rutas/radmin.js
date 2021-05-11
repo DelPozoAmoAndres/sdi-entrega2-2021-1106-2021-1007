@@ -61,7 +61,7 @@ module.exports = function (app, swig, gestorBD) {
                                     //redireccionamos a la vista de error
                                     res.redirect("/systemError")
                                     console.log("Error al listar productos del usuario")
-                                } else {
+                                } else if (productos.length>0){
                                     console.log("Listado correcto de los productos")
                                     //bucle para recorrer la lista de productos
                                     for (let j = 0; j < productos.length; j++) {

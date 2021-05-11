@@ -85,7 +85,7 @@ public class PO_UserView extends PO_View {
     	PO_View.checkElement(driver, "text", email);
     }
     static public void checkNotUsuario(WebDriver driver, String email) {
-    	SeleniumUtils.EsperaCargaPaginaNoTexto(driver, email, 1);
+    	SeleniumUtils.EsperaCargaPaginaNoTexto(driver, email, 3);
     }
     static public void selectUser(WebDriver driver, int index) {
     	driver.findElement(By.xpath("/html/body/div/form/div/table/tbody/tr["+index+"]/td[4]/input")).click();
