@@ -81,9 +81,11 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 	static public void end() {
 		// Cerramos el navegador al finalizar las pruebas
 		driver.quit();
+		//Reseteamos la BD para poder trabajar en el desarollo despues
+		init(); 
 	}
 
-	private void init() {
+	private static void init() {
 		// Eliminamos las colecciones existentes
 		db.getCollection("usuarios").drop();
 		db.getCollection("productos").drop();

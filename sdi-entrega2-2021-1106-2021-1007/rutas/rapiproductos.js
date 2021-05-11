@@ -50,7 +50,7 @@ module.exports = function (app, gestorBD) {
     app.post("/api/producto/:id/message/add/", function (req, res) {
         let criterioProducto = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
         gestorBD.obtenerProductos(criterioProducto, function (productos) {
-            if (productos == null || productos.length===0 || res.usuario.localeCompare(productos[0].autor)) {
+            if (productos == null || productos.length===0 || res.usuario.localeCompare(productos[0].autor)!==1) {
                 res.status(500);
                 res.json({
                     error: "se ha producido un error"
@@ -106,8 +106,20 @@ module.exports = function (app, gestorBD) {
             }
         })
     });
-    app.get("/api/producto/:id/chat/:id", function (req, res) {
-        let criterio = {"chat": gestorBD.mongo.ObjectID(req.params.id)}
-
+    app.get("/api/producto/chat/:idchat", function (req, res) {
+        let criterio = {
+            "conversacion" : gestorBD.mongo.ObjectID(req.params.idchat)
+        }
+        gestorBD.obtenerMensajes(criterio, function (mensajes){
+            if (mensajes==null){
+                res.status(500);
+                res.json({
+                    error: "se ha producido un error"
+                })
+            } else {
+                res.status(200);
+                res.send(JSON.stringify(mensajes));
+            }
+        });
     });
 }
