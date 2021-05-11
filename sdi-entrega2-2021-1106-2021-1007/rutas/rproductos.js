@@ -60,8 +60,6 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                             res.redirect("/home");
                         }
                     });
-                } else {
-                    res.redirect("/systemError")
                 }
             }
         });
@@ -88,7 +86,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                 res.redirect("/systemError");
             else {
                 //comprobamos si hemos hecho una busqueda de un producto por una palabra clave
-                if (req.query.busqueda != null && req.query.busqueda !== "") {
+                if (req.query.busqueda != null && req.query.busqueda !== " " && req.query.busqueda !== "") {
                     //criterio para obtener los productos que tengan relación con la palabra clave,
                     // que no sean del usuario que visita la tienda y que no sean destacadas
                     criterio2 = {

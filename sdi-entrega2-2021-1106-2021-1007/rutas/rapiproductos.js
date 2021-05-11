@@ -79,7 +79,6 @@ module.exports = function (app, gestorBD) {
                     } else {
                         let date = new Date();
                         let time = gestorBD.mongo.Timestamp(date.getTime())
-                        console.log(new Date(date.getTime()))
                         let mensaje = {
                             "autor":res.usuario,
                             "fecha":date.toDateString(),

@@ -1,5 +1,8 @@
 package com.uniovi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.Document;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -28,12 +31,12 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 
 	// Rutas para gecko y firefox
 	// Sergio
-	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-	static String Geckdriver024 = "C:\\Users\\sergi\\Documents\\geckodriver024win64.exe";
+//	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+//	static String Geckdriver024 = "C:\\Users\\sergi\\Documents\\geckodriver024win64.exe";
 
 	// Rutas Andres.
-//		static String PathFirefox65 = "C:\\Program Files (x86)\\Mozilla Firefox2\\firefox.exe";
-//		static String Geckdriver024 = "C:\\Users\\ANDRES_JR\\Documents\\UNIOVI\\SDI\\LABS\\geckodriver.exe";
+	static String PathFirefox65 = "C:\\Program Files (x86)\\Mozilla Firefox2\\firefox.exe";
+	static String Geckdriver024 = "C:\\Users\\ANDRES_JR\\Documents\\UNIOVI\\SDI\\LABS\\geckodriver.exe";
 
 	static WebDriver driver = getDriver(PathFirefox65, Geckdriver024);
 	static String URL = "http://localhost:3000/";
@@ -100,7 +103,7 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 				.append("rol", "Usuario Estandar");
 		db.getCollection("usuarios").insertOne(usuario);
 		usuario = new Document().append("email", "andres@developer.com").append("nombre", "Andres")
-				.append("apellidos", "Developer").append("dinero", 80)
+				.append("apellidos", "Developer").append("dinero", 60)
 				.append("password", "1cc9619256c0cef03e148a99756c06ccd6364ec63a08fac31e85ffa8276d805e")
 				.append("rol", "Usuario Estandar");
 		db.getCollection("usuarios").insertOne(usuario);
@@ -113,7 +116,7 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		// Insertamos los productos
 		Document producto = new Document().append("nombre", "Oferta1")
 				.append("descripcion", "Esta es la descripcion de la oferta de prueba1").append("precio", 20)
-				.append("fecha", "Thu May 06 2021").append("autor", "sergio@email.com").append("destacada", true);
+				.append("fecha", "Thu May 06 2021").append("autor", "sergio@email.com");
 		Document producto1 = new Document().append("nombre", "Oferta2")
 				.append("descripcion", "Esta es la descripcion de la oferta de prueba2").append("precio", 20)
 				.append("fecha", "Thu May 06 2021").append("autor", "sergio@email.com");
@@ -122,7 +125,7 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 				.append("fecha", "Thu May 06 2021").append("autor", "andres@developer.com");
 		Document producto3 = new Document().append("nombre", "Oferta4")
 				.append("descripcion", "Esta es la descripcion de la oferta de prueba4").append("precio", 20)
-				.append("fecha", "Thu May 06 2021").append("autor", "andres@developer.com").append("destacada", true);
+				.append("fecha", "Thu May 06 2021").append("autor", "andres@developer.com");
 		;
 		Document producto4 = new Document().append("nombre", "Oferta5")
 				.append("descripcion", "Esta es la descripcion de la oferta de prueba5").append("precio", 20)
@@ -316,4 +319,205 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		PO_UserView.checkNotUsuario(driver, "andres@developer.com");
 		PO_UserView.checkNotUsuario(driver, "prueba@developer.com");
 	}
+	
+	@Test
+	public void Prueba15() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "sergio@email.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Vamos al formulario de a�adir productos y lo rellenamos con datos validos
+		PO_UserView.addProduct(driver, "Titulo1", "DescripcionDescripcion1", "2", false);
+		// Checkeamos que se ha creado correctamente el producto
+		PO_UserView.expectingText(driver, "Lista de ofertas propias");
+	}
+
+	@Test
+	public void Prueba16() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Vamos al formulario de a�adir productos y lo rellenamos con datos validos
+		PO_UserView.addProduct(driver, " ", "Descripcion1", "-1", false);
+		// Checkeamos que se ha producido un error
+		PO_UserView.error(driver, "Hay algún campo vacío");
+	}
+
+	@Test
+	public void Prueba17() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Comprobamos que se muestra correctamente la lista de productos
+		String[] titulos = { "Oferta3", "Oferta4", "Oferta7", "Oferta8" };
+		PO_UserView.checkListProducts(driver, titulos);
+	}
+
+	@Test
+	public void Prueba18() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Eliminamos el primer producto de la lista
+		PO_UserView.deleteProduct(driver, "Oferta3");
+		// Checkeamos que estamos en el listado de ofertas
+		PO_UserView.expectingText(driver, "Lista de ofertas propias");
+		// Comprobamos que se ha eliminado
+		PO_UserView.checkNoProduct(driver, "Oferta3");
+
+	}
+
+	@Test
+	public void Prueba19() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Eliminamos el primer producto de la lista
+		PO_UserView.deleteProduct(driver, "Oferta8");
+		// Checkeamos que estamos en el listado de ofertas
+		PO_UserView.expectingText(driver, "Lista de ofertas propias");
+		// Comprobamos que se ha eliminado
+		PO_UserView.checkNoProduct(driver, "Oferta8");
+	}
+
+	@Test
+	public void Prueba20() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Ir a la tienda
+		PO_UserView.goShopping(driver);
+		// buscar campo vacio
+		PO_UserView.searchTitle(driver, " ");
+		// comprobamos que se ven todos los titulos
+		String[] titulos = { "Oferta1", "Oferta2", "Oferta5", "Oferta6" };
+		PO_UserView.checkListProducts(driver, titulos);
+	}
+
+	@Test
+	public void Prueba21() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Ir a la tienda
+		PO_UserView.goShopping(driver);
+		// buscar campo que no coincida con ningun producto
+		PO_UserView.searchTitle(driver, "asdasdasd");
+		// comprobamos que no se ven los titulos
+		PO_UserView.checkNoProduct(driver, "descripcion");
+	}
+
+	@Test
+	public void Prueba22() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Ir a la tienda
+		PO_UserView.goShopping(driver);
+		// buscar campo mayus y minus con coincidencia
+		PO_UserView.searchTitle(driver, "OfErTa1");
+		// comprobamos que se ve el titulo
+		String[] titulo = { "Oferta1" };
+		PO_UserView.checkListProducts(driver, titulo);
+	}
+
+	@Test
+	public void Prueba23() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Ir a la tienda
+		PO_UserView.goShopping(driver);
+		// buscar campo mayus y minus con coincidencia
+		PO_UserView.searchTitle(driver, "OfErTa1");
+		// compramos el producto y comprobamos si se actuliza el saldo
+		PO_UserView.comprarProducto(driver, "Oferta1", 20);
+
+	}
+
+	@Test
+	public void Prueba24() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Ir a la tienda
+		PO_UserView.goShopping(driver);
+		// compramos el producto y comprobamos si se actuliza el saldo
+		PO_UserView.comprarProducto(driver, "Oferta1", 20);
+		// Ir a la tienda
+				PO_UserView.goShopping(driver);
+		// compramos el producto y comprobamos si se actuliza el saldo
+		PO_UserView.comprarProducto(driver, "Oferta2", 20);
+		// Ir a la tienda
+				PO_UserView.goShopping(driver);
+		// compramos el producto y comprobamos si se actuliza el saldo
+		PO_UserView.comprarProducto(driver, "Oferta5", 20);
+	}
+
+	@Test
+	public void Prueba25() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Ir a la tienda
+		PO_UserView.goShopping(driver);
+		// compramos el producto y comprobamos si se actuliza el saldo
+		PO_UserView.comprarProducto(driver, "Oferta1", 20);
+		// Ir a la tienda
+				PO_UserView.goShopping(driver);
+		// compramos el producto y comprobamos si se actuliza el saldo
+		PO_UserView.comprarProducto(driver, "Oferta2", 20);
+		// Ir a la tienda
+				PO_UserView.goShopping(driver);
+		// compramos el producto y comprobamos si se actuliza el saldo
+		PO_UserView.comprarProducto(driver, "Oferta5", 20);
+		// Ir a la tienda
+				PO_UserView.goShopping(driver);
+		// compramos el producto y comprobamos si se actuliza el saldo
+		PO_UserView.comprarProducto(driver, "Oferta5", 20);
+	}
+
+	@Test
+	public void Prueba26() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Ir a la tienda
+		PO_UserView.goShopping(driver);
+		// compramos el producto y comprobamos si se actuliza el saldo
+		PO_UserView.comprarProducto(driver, "Oferta1", 20);
+		// ir a compradas
+		PO_UserView.goToBuyed(driver);
+		// comprobamos que se ve el titulo
+		String[] titulo = { "Oferta1" };
+		PO_UserView.checkListProducts(driver, titulo);
+
+	}
+
+	@Test
+	public void Prueba27() {
+
+	}
+
+	@Test
+	public void Prueba28() {
+
+	}
+
+	@Test
+	public void Prueba29() {
+
+	}
+
 }

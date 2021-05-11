@@ -6,7 +6,7 @@ module.exports = function (app, swig, gestorBD) {
         //método de la base de datos que saca los usuarios que cumplen dicha condiciones
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             //checkeamos que no hay ningun error o que la lista no esté vacia
-            if (usuarios === null || usuarios.length === 0)
+            if (usuarios === null)
                 //redireccionamos a la vista de error
                 res.redirect("/systemError");
             else {
@@ -86,7 +86,6 @@ module.exports = function (app, swig, gestorBD) {
                 }
             })
         }
-        //redireccionamos a la vista de home en caso de ningun error
         res.redirect("/homeAdmin")
     })
 };

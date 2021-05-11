@@ -11,7 +11,7 @@
                 <input type="text" class="search-query form-control" placeholder="Nombre de la canción"
                        name="busqueda"/>
                 <span class="input-group-btn">
-                    <button class="btn" type="submit">
+                    <button name="lupa" class="btn" type="submit">
                         <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </span>
@@ -72,7 +72,7 @@
             {% if oferta.comprador %}
                 <td><span>Vendido</span></td>
             {% else %}
-                <td><a class="btn btn-primary" href="/product/buy/{{ oferta._id.toString() }}">Comprar</a></td>
+                <td><a name="comprar" class="btn btn-primary" href="/product/buy/{{ oferta._id.toString() }}">Comprar</a></td>
             {% endif %}
         </tr>
         {% endfor %}

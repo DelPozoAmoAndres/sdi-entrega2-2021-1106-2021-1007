@@ -35,7 +35,7 @@
                 {% if userSession %}
                     {% if userSession.rol!='Usuario Administrador' %}
                     <li><a>{{userSession.email}}</a></li>
-                    <li><a>{{userSession.dinero}}€</a></li>
+                    <li><a name="saldo">{{userSession.dinero}}€</a></li>
                     {% endif %}
                     <li><a href="/logout"><span name="Logout" class="glyphicon glyphicon-user"></span>Logout</a></li>
                 {% else %}
