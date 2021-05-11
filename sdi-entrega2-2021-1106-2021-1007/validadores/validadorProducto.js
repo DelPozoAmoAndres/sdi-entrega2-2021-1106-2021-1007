@@ -31,7 +31,8 @@ module.exports = {
     checkSaldo: function (req, res,url,cantidad){
         //Si la cantidad es mayor que el saldo del usuario no permitimos la compra
         if (cantidad>req.session.dinero) {
-            res.redirect(url + "?mensaje=No tienes suficiente saldo&tipoMensaje=alert-danger")
+            url+="?mensaje=No tienes suficiente saldo&tipoMensaje=alert-danger"
+            res.redirect(url)
             return false;
         }
         return true;

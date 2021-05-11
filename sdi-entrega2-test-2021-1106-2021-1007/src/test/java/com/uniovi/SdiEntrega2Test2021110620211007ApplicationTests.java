@@ -31,12 +31,12 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 
 	// Rutas para gecko y firefox
 	// Sergio
-	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-	static String Geckdriver024 = "C:\\Users\\sergi\\Documents\\geckodriver024win64.exe";
+//	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+//	static String Geckdriver024 = "C:\\Users\\sergi\\Documents\\geckodriver024win64.exe";
 
 	// Rutas Andres.
-//	static String PathFirefox65 = "C:\\Program Files (x86)\\Mozilla Firefox2\\firefox.exe";
-//	static String Geckdriver024 = "C:\\Users\\ANDRES_JR\\Documents\\UNIOVI\\SDI\\LABS\\geckodriver.exe";
+	static String PathFirefox65 = "C:\\Program Files (x86)\\Mozilla Firefox2\\firefox.exe";
+	static String Geckdriver024 = "C:\\Users\\ANDRES_JR\\Documents\\UNIOVI\\SDI\\LABS\\geckodriver.exe";
 
 	static WebDriver driver = getDriver(PathFirefox65, Geckdriver024);
 	static String URL = "http://localhost:3000/";
@@ -270,47 +270,47 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		PO_LoginView.login(driver, "admin@email.com", "admin");
 		// Comprobamos que hemos entrado en la pagina de inicio de admin
 		PO_LoginView.checkHome(driver, "Vista de administrador");
-		
-		//Comprobamos que los usuarios de la BD estan en la lista
+
+		// Comprobamos que los usuarios de la BD estan en la lista
 		PO_UserView.checkUsuario(driver, "Sergio", "Mate Suarez", "sergio@email.com");
 		PO_UserView.checkUsuario(driver, "Andres", "Developer", "andres@developer.com");
 		PO_UserView.checkUsuario(driver, "Prueba", "Developer", "prueba@developer.com");
 	}
-	
+
 	@Test
 	public void Prueba12() {
 		// Nos logeamos como administrador
 		PO_LoginView.login(driver, "admin@email.com", "admin");
 		// Comprobamos que hemos entrado en la pagina de inicio de admin
 		PO_LoginView.checkHome(driver, "Vista de administrador");
-		
-		//Eliminamos el primer usuario y vemos que ya no esta en la lista
+
+		// Eliminamos el primer usuario y vemos que ya no esta en la lista
 		PO_UserView.selectUser(driver, 1);
 		PO_UserView.deleteUsers(driver);
 		PO_UserView.checkNotUsuario(driver, "sergio@email.com");
 	}
-	
+
 	@Test
 	public void Prueba13() {
 		// Nos logeamos como administrador
 		PO_LoginView.login(driver, "admin@email.com", "admin");
 		// Comprobamos que hemos entrado en la pagina de inicio de admin
 		PO_LoginView.checkHome(driver, "Vista de administrador");
-		
-		//Eliminamos el ultimo usuario y vemos que ya no esta en la lista
+
+		// Eliminamos el ultimo usuario y vemos que ya no esta en la lista
 		PO_UserView.selectUser(driver, 3);
 		PO_UserView.deleteUsers(driver);
 		PO_UserView.checkNotUsuario(driver, "prueba@developer.com");
 	}
-	
+
 	@Test
 	public void Prueba14() {
 		// Nos logeamos como administrador
 		PO_LoginView.login(driver, "admin@email.com", "admin");
 		// Comprobamos que hemos entrado en la pagina de inicio de admin
 		PO_LoginView.checkHome(driver, "Vista de administrador");
-		
-		//Eliminamos tres usuarios y vemos que ya no estan en la lista
+
+		// Eliminamos tres usuarios y vemos que ya no estan en la lista
 		PO_UserView.selectUser(driver, 1);
 		PO_UserView.selectUser(driver, 2);
 		PO_UserView.selectUser(driver, 3);
@@ -319,7 +319,7 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		PO_UserView.checkNotUsuario(driver, "andres@developer.com");
 		PO_UserView.checkNotUsuario(driver, "prueba@developer.com");
 	}
-	
+
 	@Test
 	public void Prueba15() {
 		// Rellenamos el formulario de registro con datos correctos
@@ -454,11 +454,11 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		// compramos el producto y comprobamos si se actuliza el saldo
 		PO_UserView.comprarProducto(driver, "Oferta1", 20);
 		// Ir a la tienda
-				PO_UserView.goShopping(driver);
+		PO_UserView.goShopping(driver);
 		// compramos el producto y comprobamos si se actuliza el saldo
 		PO_UserView.comprarProducto(driver, "Oferta2", 20);
 		// Ir a la tienda
-				PO_UserView.goShopping(driver);
+		PO_UserView.goShopping(driver);
 		// compramos el producto y comprobamos si se actuliza el saldo
 		PO_UserView.comprarProducto(driver, "Oferta5", 20);
 	}
@@ -474,15 +474,15 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		// compramos el producto y comprobamos si se actuliza el saldo
 		PO_UserView.comprarProducto(driver, "Oferta1", 20);
 		// Ir a la tienda
-				PO_UserView.goShopping(driver);
+		PO_UserView.goShopping(driver);
 		// compramos el producto y comprobamos si se actuliza el saldo
 		PO_UserView.comprarProducto(driver, "Oferta2", 20);
 		// Ir a la tienda
-				PO_UserView.goShopping(driver);
+		PO_UserView.goShopping(driver);
 		// compramos el producto y comprobamos si se actuliza el saldo
 		PO_UserView.comprarProducto(driver, "Oferta5", 20);
 		// Ir a la tienda
-				PO_UserView.goShopping(driver);
+		PO_UserView.goShopping(driver);
 		// compramos el producto y comprobamos si se actuliza el saldo
 		PO_UserView.comprarProducto(driver, "Oferta5", 20);
 	}
@@ -507,17 +507,56 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 
 	@Test
 	public void Prueba27() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Vamos al formulario de añadir productos y lo rellenamos con datos validos
+		PO_UserView.addProduct(driver, "Titulo1", "DescripcionDescripcion1", "2", true);
+		// Checkeamos estado destacada en el buscador
+		PO_UserView.expectingText(driver, "Destacada");
+		// Nos deslogueamos
+		PO_LoginView.logout(driver);
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "sergio@email.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Ir a la tienda
+		PO_UserView.goShopping(driver);
+		// buscar campo que no coincida con ningun producto
+		PO_UserView.searchTitle(driver, "asdasdasd");
+		// comprobamos que está el producto
+		String[] titulos = { "Titulo1" };
+		PO_UserView.checkListProducts(driver, titulos);
 
 	}
 
 	@Test
 	public void Prueba28() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Marco en destacar un producto y comprobamos que se ha realizado correctamente
+		PO_UserView.distingProduct(driver, "Oferta3");
 
 	}
 
 	@Test
 	public void Prueba29() {
-
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.login(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Vista de usuario");
+		// Marco en destacar un producto y comprobamos que se ha realizado correctamente
+		PO_UserView.distingProduct(driver, "Oferta3");
+		// Marco en destacar un producto y comprobamos que se ha realizado correctamente
+		PO_UserView.distingProduct(driver, "Oferta4");
+		// Marco en destacar un producto y comprobamos que se ha realizado correctamente
+		PO_UserView.distingProduct(driver, "Oferta7");
+		// Marco en destacar un producto y comprobamos que no se ha realizado
+		// correctamente
+		PO_UserView.distingProduct(driver, "Oferta8");
 	}
 
 }

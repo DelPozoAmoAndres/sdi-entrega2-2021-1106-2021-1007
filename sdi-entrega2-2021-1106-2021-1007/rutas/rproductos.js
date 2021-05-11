@@ -153,7 +153,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
         //nuevo valor que le tenemos que introducir al producto en la base de datos
         let values = {"destacada": true}
         //comprobamos que el usuario tiene suficiente dinero para destacar el producto
-        if (validadorProductos.checkSaldo(req, res, "/home", 20))
+        if (validadorProductos.checkSaldo(req, res, "/homeUser", 20))
             //metodo de la base de datos para descontar el dinero de su cuenta
             gestorBD.cobrar(criterio2, 20, function (usuario) {
                 if (usuario == null) {
@@ -168,7 +168,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                                 if (usuario == null) {
                                     res.redirect("/systemError")
                                 }
-                                res.redirect("/home?mensaje=Se ha producido un problema al " +
+                                res.redirect("/homeUser?mensaje=Se ha producido un problema al " +
                                     "marcar como destacada dicho producto, intentelo más tarde")
                             })
                         } else {

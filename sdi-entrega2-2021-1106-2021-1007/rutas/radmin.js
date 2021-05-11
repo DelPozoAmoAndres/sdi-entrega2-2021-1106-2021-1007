@@ -12,8 +12,8 @@ module.exports = function (app, swig, gestorBD) {
             else {
                 //creamos una variable usuario
                 let usuario = {
-                    email : req.session.usuario,
-                    rol : req.session.rol
+                    email: req.session.usuario,
+                    rol: req.session.rol
                 }
                 //creamos una variable respuesta que será la que renderice la vista home
                 // y le pase informacion del usuario y la lista de usuarios
@@ -31,6 +31,7 @@ module.exports = function (app, swig, gestorBD) {
         let lista = {"lista": req.params.lista};
         //lista de usuarios haciendo uso de split
         let users = lista.lista.split(",")
+        let usuariosEliminados = 0;
         //bucle para recorrer los usuarios a eliminar y hacer eliminacion en cascada
         for (let i = 0; i < users.length; i++) {
             //criterio para eliminar usuario por id
@@ -38,7 +39,7 @@ module.exports = function (app, swig, gestorBD) {
             //metodo de la base de datos para obtener al usuario por el criterio dado
             gestorBD.obtenerUsuarios(criterioUsuario, function (usuario) {
                 //checkeamos que la lista no esté vacia
-                if (usuario.length<0) {
+                if (usuario.length < 0) {
                     //redireccionamos a la vista de error
                     res.redirect("/systemError")
                     console.log("Error al obtener usuario")
@@ -53,7 +54,7 @@ module.exports = function (app, swig, gestorBD) {
                         } else {
                             console.log("Eliminacion correcta del usuario")
                             //criterio para obtener los productos por email
-                            criterioUsuario={"autor": (usuario[0].email)}
+                            criterioUsuario = {"autor": (usuario[0].email)}
                             //metodo de la base de datos para obtener los productos que cumplan el criterio
                             gestorBD.obtenerProductos(criterioUsuario, function (productos) {
                                 //checkeamos que no hay ningun error
@@ -61,7 +62,7 @@ module.exports = function (app, swig, gestorBD) {
                                     //redireccionamos a la vista de error
                                     res.redirect("/systemError")
                                     console.log("Error al listar productos del usuario")
-                                } else if (productos.length>0){
+                                } else if (productos.length > 0) {
                                     console.log("Listado correcto de los productos")
                                     //bucle para recorrer la lista de productos
                                     for (let j = 0; j < productos.length; j++) {
@@ -79,13 +80,19 @@ module.exports = function (app, swig, gestorBD) {
                                     }
                                     console.log("Eliminación correcta de los productos")
                                 }
+                                    usuariosEliminados++;
+                                    console.log(usuariosEliminados)
+                                    if (usuariosEliminados === users.length) {
+                                        res.redirect("/homeAdmin")
+                                    }
+
                             })
 
                         }
                     })
                 }
+
             })
         }
-        res.redirect("/homeAdmin")
     })
 };

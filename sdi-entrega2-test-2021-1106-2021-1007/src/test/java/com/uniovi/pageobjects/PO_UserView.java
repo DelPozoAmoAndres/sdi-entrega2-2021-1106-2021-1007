@@ -32,9 +32,26 @@ public class PO_UserView extends PO_View {
 	static public void addProduct(WebDriver driver, String titulo, String descripcion, String precio, boolean destacada){
 		driver.findElement(By.name("add")).click();
 		fillForm(driver, titulo, descripcion, precio, destacada);
+		if(destacada) {
+			int saldo=Integer.valueOf(driver.findElement(By.name("saldo")).getText().replace("€", ""));
+			try {
+				 PO_View.checkElement(driver, "text", String.valueOf(saldo-20));
+			 }catch(Exception e) {
+				 PO_View.checkElement(driver, "text", "No tienes suficiente saldo");
+			 }
+		}
 	}
 	static public void deleteProduct(WebDriver driver, String titulo){
-		driver.findElement(By.name(titulo)).click();
+		driver.findElement(By.name(titulo+"Eliminar")).click();
+	}
+	static public void distingProduct(WebDriver driver, String titulo){
+		int saldo=Integer.valueOf(driver.findElement(By.name("saldo")).getText().replace("€", ""));
+		driver.findElement(By.name(titulo+"Destacar")).click();
+		try {
+			 PO_View.checkElement(driver, "text", String.valueOf(saldo-20)+"€");
+		 }catch(Exception e) {
+			 PO_View.checkElement(driver, "text", "No tienes suficiente saldo");
+		 }
 	}
 	static public void goShopping(WebDriver driver){
 		driver.findElement(By.id("mTienda")).click();
@@ -91,7 +108,7 @@ public class PO_UserView extends PO_View {
     	driver.findElement(By.xpath("/html/body/div/form/div/table/tbody/tr["+index+"]/td[4]/input")).click();
     }
 	public static void deleteUsers(WebDriver driver) {
-		driver.findElement(By.className("btn-primary")).click();;
+		driver.findElement(By.className("btn-primary")).click();
 	}
 		
 }
