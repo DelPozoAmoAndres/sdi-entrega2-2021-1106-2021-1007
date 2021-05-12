@@ -7,13 +7,12 @@ module.exports = function (app, gestorBD) {
             email: req.body.email,
             password: seguro
         }
-        if (criterio.email===undefined || criterio.email.length===0 || seguro.length===0){
+        if (criterio.email === undefined || criterio.email.length === 0 || seguro.length === 0) {
             res.status(500);
             res.json({
                 error: "se ha producido un error de validacion"
             })
-        }
-        else {
+        } else {
             gestorBD.obtenerUsuarios(criterio, function (usuarios) {
                 if (usuarios == null || usuarios.length === 0) {
                     res.status(401); //Unauthorized
@@ -47,30 +46,44 @@ module.exports = function (app, gestorBD) {
             }
         });
     });
-    app.post("/api/producto/:id/message/add/", function (req, res) {
+    app.post("/api/producto/:id/message/add", function (req, res) {
         let criterioProducto = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
         gestorBD.obtenerProductos(criterioProducto, function (productos) {
-            if (productos == null || productos.length===0 || res.usuario.localeCompare(productos[0].autor)!==1) {
+            if (productos == null || productos.length === 0) {
                 res.status(500);
                 res.json({
                     error: "se ha producido un error"
                 })
             } else {
                 let criterioChat = {
-                    $and:
-                        [
-                            {"autor": productos[0].autor},
-                            {"comprador": res.usuario},
-                            {"producto": productos[0]._id}
-                        ]
-                }
+                    $or: [
+                        {
+                            $and:
+                                [
+                                    {comprador: res.usuario},
+                                    {autor: productos[0].autor},
+                                    {producto: gestorBD.mongo.ObjectID(req.params.id)}
+                                ]
+                        },
+                        {
+                            $and:
+                                [
+                                    {autor: res.usuario},
+                                    {comprador: productos[0].autor},
+                                    {producto: gestorBD.mongo.ObjectID(req.params.id)}
+                                ]
+                        }
+                    ]
+                };
+
                 let chat =
                     {
                         "autor": productos[0].autor,
                         "comprador": res.usuario,
-                        "producto": productos[0]._id
+                        "producto": gestorBD.mongo.ObjectID(productos[0]._id)
                     }
-                gestorBD.obtenerConversaciones(criterioChat,chat, function (conversaciones) {
+
+                gestorBD.obtenerConversaciones(criterioChat, chat, function (conversaciones) {
                     if (conversaciones == null) {
                         res.status(500);
                         res.json({
@@ -80,22 +93,21 @@ module.exports = function (app, gestorBD) {
                         let date = new Date();
                         let time = gestorBD.mongo.Timestamp(date.getTime())
                         let mensaje = {
-                            "autor":res.usuario,
-                            "fecha":date.toDateString(),
-                            "hora":time,
-                            "mensaje":req.body.texto,
-                            "leido":false,
-                            "conversacion":gestorBD.mongo.ObjectID(conversaciones)
+                            "autor": res.usuario,
+                            "fecha": date.toDateString(),
+                            "hora": time,
+                            "mensaje": req.body.texto,
+                            "leido": false,
+                            "conversacion": gestorBD.mongo.ObjectID(conversaciones[0]._id)
                         }
 
                         gestorBD.insertarMensaje(mensaje, function (mensaje) {
-                            if(mensaje===null){
+                            if (mensaje === null) {
                                 res.status(500);
                                 res.json({
                                     error: "se ha producido un error"
                                 })
-                            }
-                            else{
+                            } else {
                                 res.json({
                                     id: mensaje
                                 })
@@ -106,19 +118,86 @@ module.exports = function (app, gestorBD) {
             }
         })
     });
-    app.get("/api/producto/chat/:id", function (req, res) {
+
+    app.get("/api/producto/chats", function(req, res){
         let criterio = {
-            "conversacion" : gestorBD.mongo.ObjectID(req.params.id)
+            $or: [
+                {"autor": res.usuario},
+                {"comprador" : res.usuario}
+            ]
         }
-        gestorBD.obtenerMensajes(criterio, function (mensajes){
-            if (mensajes==null){
+        gestorBD.obtenerConversaciones(criterio, undefined,function (convers) {
+            if (convers == null) {
                 res.status(500);
                 res.json({
                     error: "se ha producido un error"
                 })
             } else {
                 res.status(200);
-                res.send(JSON.stringify(mensajes));
+                res.send(JSON.stringify(convers));
+            }
+        });
+    })
+
+    app.get("/api/producto/:id/chat", function (req, res) {
+        let criterioProducto = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
+        gestorBD.obtenerProductos(criterioProducto, function (productos) {
+            if (productos == null || productos.length === 0) {
+                res.status(500);
+                res.json({
+                    error: "se ha producido un error"
+                })
+            } else {
+                let usuario = res.usuario
+                let criterio = {
+                    $or: [
+                        {
+                            $and:
+                                [
+                                    {comprador: usuario},
+                                    {autor: productos[0].autor},
+                                    {producto: gestorBD.mongo.ObjectID(req.params.id)}
+                                ]
+                        },
+                        {
+                            $and:
+                                [
+                                    {autor: usuario},
+                                    {comprador: productos[0].autor},
+                                    {producto: gestorBD.mongo.ObjectID(req.params.id)}
+                                ]
+                        }
+                    ]
+                };
+                gestorBD.obtenerConversaciones(criterio, undefined,function (conversacion) {
+                    if (conversacion == null) {
+                        res.status(500);
+                        res.json({
+                            error: "se ha producido un error"
+                        })
+                    }
+                    else if(conversacion==0){
+                        res.status(200)
+                        res.json({
+                            info: "No hay conversaciones"
+                        })
+
+                }else{
+                        let criterio={"conversacion":gestorBD.mongo.ObjectID(conversacion._id)}
+                        console.log(criterio.conversacion)
+                        gestorBD.obtenerMensajes(criterio,function (mensajes){
+                           if(mensajes===null){
+                               res.status(500);
+                               res.json({
+                                   error: "se ha producido un error"
+                               })
+                           }
+                           else{
+                               res.json(mensajes)
+                           }
+                       })
+                    }
+                });
             }
         });
     });

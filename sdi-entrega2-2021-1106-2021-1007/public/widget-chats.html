@@ -1,0 +1,74 @@
+<div id="widget-chats">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Comprador</th>
+            <th>Vendedor</th>
+            <th class="col-md-1"></th>
+        </tr>
+        </thead>
+        <tbody id="tablaCuerpo">
+        </tbody>
+    </table>
+    <div>
+    </div>
+</div>
+
+<script>
+    window.history.pushState("", "", "/cliente.html?w=chats");
+
+    function cargarConversaciones() {
+        $.ajax({
+            url: URLbase + "/producto/chats/",
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                convers=respuesta
+                actualizarTabla(convers);
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
+
+    $("#enviar").click(()=>añadirMensaje($("#mensaje").val().toString()))
+
+
+    function actualizarTabla(convers) {
+        $("#tablaCuerpo").empty(); // Vaciar la tabla
+        for (i = 0; i < convers.length; i++) {
+            $("#tablaCuerpo").append(
+                "<tr id=" + convers[i]._id + ">" +
+                "<td>" + convers[i].producto + "</td>" +
+                "<td>" + convers[i].comprador + "</td>" +
+                "<td>" + convers[i].autor + "</td>" +
+                "<td><button onclick=chatear('"+convers[i].producto.toString()+"')>"+"Chatear"+"</button></td>"+
+                "</tr>")
+        }
+    }
+
+    cargarConversaciones();
+    function chatear(id) {
+        $.ajax({
+            url: URLbase + "/producto",
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                Cookies.set('idProducto',id);
+                $("#contenedor-principal").load("widget-chat.html")
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
+
+
+
+</script>

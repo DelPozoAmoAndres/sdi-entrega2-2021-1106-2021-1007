@@ -176,7 +176,7 @@ module.exports = {
             }
         })
     },
-    obtenerConversaciones: function (criterio,chat, functionCallback) {
+    obtenerConversaciones: function (criterio, chat, functionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 functionCallback(null);
@@ -185,8 +185,12 @@ module.exports = {
                 collection.find(criterio).toArray(function (err, conversaciones) {
                     if (err) {
                         functionCallback(null);
-                    } else if (conversaciones.length === 0) {
-                        collection.insertOne(chat,function (err, conversaciones) {
+                    }
+                    else if(conversaciones.length===0 && chat===undefined){
+                        functionCallback(0)
+                    }
+                    else if (conversaciones.length === 0) {
+                        collection.insertOne(chat, function (err, conversaciones) {
                             if (err) {
                                 functionCallback(null);
                             } else {
@@ -195,7 +199,7 @@ module.exports = {
                             }
                         })
                     } else {
-                        functionCallback(conversaciones[0]._id);
+                        functionCallback(conversaciones);
                     }
                     db.close();
                 });

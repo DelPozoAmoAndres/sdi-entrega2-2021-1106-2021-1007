@@ -20,6 +20,7 @@
 
 <script>
     window.history.pushState("", "", "/cliente.html?w=productos");
+
     var productos;
 
     function cargarProductos() {
@@ -49,8 +50,7 @@
                 "<td>" + productosMostrar[i].precio + "</td>" +
                 "<td>" + productosMostrar[i].autor + "</td>" +
                 "<td>"+
-                "<input type='text' id='chatear'" + productosMostrar[i]._id + "/>"+
-                "<button onclick='()=>chatear("+productosMostrar[i]._id +","+$('"#chatear" + productosMostrar[i]._id + '").val()+")'>"+"Chatear"+"</button>"+
+                "<button onclick=chatear('"+productosMostrar[i]._id.toString()+"')>"+"Chatear"+"</button>"+
                 "</td>"+
                 "</tr>")
 
@@ -60,16 +60,16 @@
 
     cargarProductos();
 
-    function chatear(_id, texto) {
+    function chatear(id,email) {
         $.ajax({
-            url: URLbase + "/producto/" + _id +"/message/add",
-            type: "POST",
-            data: {texto : texto},
+            url: URLbase + "/producto",
+            type: "GET",
+            data: {},
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
-                console.log("Mensaje creado");
-                console.log(respuesta);
+                Cookies.set('idProducto',id);
+                $("#contenedor-principal").load("widget-chat.html")
             },
             error: function (error) {
                 $("#contenedor-principal").load("widget-login.html");

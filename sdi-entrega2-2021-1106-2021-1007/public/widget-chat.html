@@ -1,0 +1,75 @@
+<div id="widget-chat">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Mensaje</th>
+            <th class="col-md-1"></th>
+        </tr>
+        </thead>
+        <tbody id="tablaCuerpo">
+        </tbody>
+    </table>
+    <div>
+        <input id="mensaje" type="text" required="true">
+        <button type="submit" id="enviar">Enviar</button>
+    </div>
+</div>
+
+<script>
+    window.history.pushState("", "", "/cliente.html?w=chat");
+    var productos;
+    var idProducto=Cookies.get("idProducto")
+
+    function cargarMensajes() {
+        $.ajax({
+            url: URLbase + "/producto/"+idProducto.toString()+"/chat/",
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                mensajes=respuesta
+                actualizarTabla(mensajes);
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
+
+    $("#enviar").click(()=>añadirMensaje($("#mensaje").val().toString()))
+
+    function añadirMensaje(texto){
+        $.ajax({
+            url: URLbase + "/producto/"+idProducto.toString()+"/message/add",
+            type: "POST",
+            data: {texto:texto.toString()},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                mensajes = respuesta;
+                cargarMensajes();
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
+
+    function actualizarTabla(mensajes) {
+        $("#tablaCuerpo").empty(); // Vaciar la tabla
+        $("#tablaCuerpo").append("<td>" + idProducto + "</td>")
+        for (i = 0; i < mensajes.length; i++) {
+            $("#tablaCuerpo").append(
+                "<tr id=" + mensajes[i]._id + ">" +
+                "<td>" + mensajes[i].autor + "</td>" +
+                "<td>" + mensajes[i].mensaje + "</td>" +
+                "</tr>")
+        }
+    }
+
+    cargarMensajes();
+
+
+</script>
