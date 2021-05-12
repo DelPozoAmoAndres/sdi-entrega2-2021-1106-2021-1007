@@ -9,7 +9,7 @@ import com.uniovi.utils.SeleniumUtils;
 
 public class PO_View {
 	
-	protected static int timeout = 2;
+	protected static int timeout = 4;
 
 	public static int getTimeout() {
 		return timeout;
