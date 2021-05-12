@@ -195,7 +195,7 @@ module.exports = {
                                 functionCallback(null);
                             } else {
                                 console.log(conversaciones)
-                                functionCallback(conversaciones.ops[0]._id)
+                                functionCallback(conversaciones)
                             }
                         })
                     } else {

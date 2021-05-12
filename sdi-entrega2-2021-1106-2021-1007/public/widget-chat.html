@@ -23,6 +23,7 @@
     var comprador=Cookies.get("comprador")
 
     function cargarMensajes() {
+        console.log("aaaaaa");
         $.ajax({
             url: URLbase + "/producto/"+idProducto.toString()+"/chat/"+comprador,
             type: "GET",
@@ -75,7 +76,7 @@
                 "</tr>")
         }
     }
-    setInterval(cargarMensajes(), 600);
+    setInterval(()=>cargarMensajes(), 20);
     cargarMensajes();
 
 
