@@ -31,8 +31,10 @@ public class PO_ChatView extends PO_View {
 	public static void sendSomeMessagesAPI(WebDriver driver, String texto) {
 		// Rellenamos el formulario de registro con datos correctos
 		PO_LoginView.loginAPI(driver, "sergio@email.com", "00000000");
+		PO_LoginView.checkHome(driver, "Tienda");
 		//Hacemoss una busqueda
 		PO_UserView.searchAndGoToChatAPI(driver, "Oferta3");
+		PO_LoginView.checkHome(driver, "Mensaje");
 		//Enviamos un mensaje a la oferta
 		PO_ChatView.sendMessageAPI(driver, texto);
 		//Comprobamos que se ha enviado

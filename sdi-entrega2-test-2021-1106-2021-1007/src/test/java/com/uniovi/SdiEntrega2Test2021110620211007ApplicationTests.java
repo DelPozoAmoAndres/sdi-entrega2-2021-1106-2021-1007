@@ -594,7 +594,7 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		// Rellenamos el formulario de registro con datos correctos
 		PO_LoginView.loginAPI(driver, "andres@developer.com", "00000000");
 		// Comprobamos que hemos entrado en la pagina de inicio
-		PO_LoginView.checkHome(driver, "tienda");
+		PO_LoginView.checkHome(driver, "Tienda");
 		// Comprobamos que se muestra correctamente la lista de productos
 		String[] titulos = { "Oferta1", "Oferta2", "Oferta5", "Oferta6" };
 		PO_UserView.checkListProducts(driver, titulos);
@@ -608,8 +608,10 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 	public void Prueba34() {
 		// Rellenamos el formulario de registro con datos correctos
 		PO_LoginView.loginAPI(driver, "andres@developer.com", "00000000");
+		PO_LoginView.checkHome(driver, "Tienda");
 		//Hacemoss una busqueda
 		PO_UserView.searchAndGoToChatAPI(driver, "Oferta1");
+		PO_LoginView.checkHome(driver, "Mensaje");
 		//Enviamos un mensaje a la oferta
 		String texto = "Texto de prueba";
 		PO_ChatView.sendMessageAPI(driver, texto);
@@ -626,8 +628,10 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		PO_ChatView.sendSomeMessagesAPI(driver, texto2);
 		// Rellenamos el formulario de registro con datos correctos
 		PO_LoginView.loginAPI(driver, "andres@developer.com", "00000000");
+		PO_LoginView.checkHome(driver, "Tienda");
 		//Vamos a la vista de las conversaciones abiertas
 		PO_ChatView.goToChatsAPI(driver);
+		PO_LoginView.checkHome(driver, "Chatear");
 		//Vamos al primer chat ya abierto
 		PO_ChatView.viewChat(driver);
 		//Comprobamos que se han enviado los mensajes desde el otro usuario
@@ -638,6 +642,21 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		PO_ChatView.sendMessageAPI(driver, texto);
 		//Comprobamos que se ha enviado
 		PO_ChatView.checkMessage(driver, texto);
+	}
+	
+	@Test 
+	public void Prueba36() {
+		//Primero enviamos unos cuantos mensajes con otra cuenta para poder verlos despues
+		String texto1 = "prueba1";
+		String texto2 = "prueba2";
+		PO_ChatView.sendSomeMessagesAPI(driver, texto1);
+		PO_ChatView.sendSomeMessagesAPI(driver, texto2);
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.loginAPI(driver, "andres@developer.com", "00000000");
+		PO_LoginView.checkHome(driver, "Tienda");
+		//Vamos a la vista de las conversaciones abiertas
+		PO_ChatView.goToChatsAPI(driver);
+		PO_LoginView.checkHome(driver, "Oferta3");
 	}
 
 }

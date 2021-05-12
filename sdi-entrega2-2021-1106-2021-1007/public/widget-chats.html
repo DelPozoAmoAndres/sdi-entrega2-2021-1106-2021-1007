@@ -17,6 +17,7 @@
 
 <script>
     window.history.pushState("", "", "/cliente.html?w=chats");
+    clearInterval(Cookies.get("interval"))
     function cargarConversaciones() {
         try {
             clearInterval(Cookies.get("interval"))
