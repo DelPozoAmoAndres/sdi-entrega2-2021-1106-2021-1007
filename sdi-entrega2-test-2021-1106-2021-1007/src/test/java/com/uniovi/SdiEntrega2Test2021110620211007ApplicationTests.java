@@ -20,6 +20,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.uniovi.pageobjects.PO_ChatView;
 import com.uniovi.pageobjects.PO_LoginView;
 import com.uniovi.pageobjects.PO_RegisterView;
 import com.uniovi.pageobjects.PO_UserView;
@@ -586,6 +587,57 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		PO_LoginView.loginAPI(driver, "sergio@email.com", "         ");
 		// Comprobamos que no hemos entrado en la pagina de inicio
 		PO_LoginView.error(driver, "Usuario no encontrado");
+	}
+	
+	@Test
+	public void Prueba33() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.loginAPI(driver, "andres@developer.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "tienda");
+		// Comprobamos que se muestra correctamente la lista de productos
+		String[] titulos = { "Oferta1", "Oferta2", "Oferta5", "Oferta6" };
+		PO_UserView.checkListProducts(driver, titulos);
+		//Comprobamos que no salen los productos del usuario registrado
+		String[] titulosUsuario = { "Oferta3", "Oferta4", "Oferta7", "Oferta8" };
+		for (String titulo : titulosUsuario)
+			PO_UserView.checkNoProduct(driver, titulo);
+	}
+	
+	@Test
+	public void Prueba34() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.loginAPI(driver, "andres@developer.com", "00000000");
+		//Hacemoss una busqueda
+		PO_UserView.searchAndGoToChatAPI(driver, "Oferta1");
+		//Enviamos un mensaje a la oferta
+		String texto = "Texto de prueba";
+		PO_ChatView.sendMessageAPI(driver, texto);
+		//Comprobamos que se ha enviado
+		PO_ChatView.checkMessage(driver, texto);
+	}
+	
+	@Test
+	public void Prueba35() {
+		//Primero enviamos unos cuantos mensajes con otra cuenta para poder verlos despues
+		String texto1 = "prueba1";
+		String texto2 = "prueba2";
+		PO_ChatView.sendSomeMessagesAPI(driver, texto1);
+		PO_ChatView.sendSomeMessagesAPI(driver, texto2);
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.loginAPI(driver, "andres@developer.com", "00000000");
+		//Vamos a la vista de las conversaciones abiertas
+		PO_ChatView.goToChatsAPI(driver);
+		//Vamos al primer chat ya abierto
+		PO_ChatView.viewChat(driver);
+		//Comprobamos que se han enviado los mensajes desde el otro usuario
+		PO_ChatView.checkMessage(driver, texto1);
+		PO_ChatView.checkMessage(driver, texto2);
+		//Enviamos un mensaje a la oferta
+		String texto = "Texto de prueba";
+		PO_ChatView.sendMessageAPI(driver, texto);
+		//Comprobamos que se ha enviado
+		PO_ChatView.checkMessage(driver, texto);
 	}
 
 }

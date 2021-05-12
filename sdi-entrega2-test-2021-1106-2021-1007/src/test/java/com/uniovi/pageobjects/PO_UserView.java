@@ -77,6 +77,15 @@ public class PO_UserView extends PO_View {
 		driver.findElement(boton).click();
 	}
 	
+	static public void searchAndGoToChatAPI(WebDriver driver, String titulop) {
+		WebElement titulo = driver.findElement(By.id("filtro-nombre"));
+		titulo.click();
+		titulo.clear();
+		titulo.sendKeys(titulop);
+		By boton = By.className("btn");
+		driver.findElement(boton).click();
+	}
+	
 	static public void comprarProducto(WebDriver driver, String titulop, int precio) {
 		 int saldo=Integer.valueOf(driver.findElement(By.name("saldo")).getText().replace("€", ""));
 		 driver.findElement(By.name("comprar")).click();
