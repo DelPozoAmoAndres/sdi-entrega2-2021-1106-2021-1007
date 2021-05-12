@@ -194,12 +194,14 @@ module.exports = {
                             if (err) {
                                 functionCallback(null);
                             } else {
-                                console.log(conversaciones)
-                                functionCallback(conversaciones)
+                                functionCallback(conversaciones.ops[0])
                             }
                         })
                     } else {
-                        functionCallback(conversaciones);
+                        if(conversaciones.length>1)
+                            functionCallback(conversaciones);
+                        else
+                            functionCallback(conversaciones[0]);
                     }
                     db.close();
                 });

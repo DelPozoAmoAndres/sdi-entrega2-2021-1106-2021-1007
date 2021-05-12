@@ -20,10 +20,10 @@
 
 <script>
     window.history.pushState("", "", "/cliente.html?w=productos");
-    clearInterval(Cookies.get("interval"))
     var productos;
 
     function cargarProductos() {
+        clearInterval(Cookies.get("interval"))
         $.ajax({
             url: URLbase + "/producto",
             type: "GET",
@@ -32,7 +32,7 @@
             headers: {"token": token},
             success: function (respuesta) {
                 productos = respuesta;
-                actualizarTabla(productos);
+                actualizarTablaProducto(productos);
             },
             error: function (error) {
                 $("#contenedor-principal").load("widget-login.html");
@@ -40,7 +40,7 @@
         });
     }
 
-    function actualizarTabla(productosMostrar) {
+    function actualizarTablaProducto(productosMostrar) {
         $("#tablaCuerpo").empty(); // Vaciar la tabla
         for (i = 0; i < productosMostrar.length; i++) {
             $("#tablaCuerpo").append(
@@ -86,7 +86,7 @@
                 productosFiltrados.push(productos[i]);
             }
         }
-        actualizarTabla(productosFiltrados);
+        actualizarTablaProducto(productosFiltrados);
     });
 
 </script>

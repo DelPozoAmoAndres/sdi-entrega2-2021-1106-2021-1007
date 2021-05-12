@@ -8,7 +8,7 @@
             <th class="col-md-1"></th>
         </tr>
         </thead>
-        <tbody id="tablaCuerpo">
+        <tbody id="tablaCuerpoChats">
         </tbody>
     </table>
     <div>
@@ -17,8 +17,8 @@
 
 <script>
     window.history.pushState("", "", "/cliente.html?w=chats");
-    clearInterval(Cookies.get("interval"))
     function cargarConversaciones() {
+        clearInterval(Cookies.get("interval"))
         $.ajax({
             url: URLbase + "/producto/chats/",
             type: "GET",
@@ -27,7 +27,7 @@
             headers: {"token": token},
             success: function (respuesta) {
                 convers=respuesta
-                actualizarTabla(convers);
+                actualizarTablaChats(convers);
             },
             error: function (error) {
                 $("#contenedor-principal").load("widget-login.html");
@@ -38,12 +38,12 @@
     $("#enviar").click(()=>añadirMensaje($("#mensaje").val().toString()))
 
 
-    function actualizarTabla(convers) {
-        $("#tablaCuerpo").empty(); // Vaciar la tabla
+    function actualizarTablaChats(convers) {
+        $("#tablaCuerpoChats").empty(); // Vaciar la tabla
         for (i = 0; i < convers.length; i++) {
-            $("#tablaCuerpo").append(
+            $("#tablaCuerpoChats").append(
                 "<tr id=" + convers[i]._id + ">" +
-                "<td>" + convers[i].producto + "</td>" +
+                "<td>" + convers[i].nombre + "</td>" +
                 "<td>" + convers[i].comprador + "</td>" +
                 "<td>" + convers[i].autor + "</td>" +
                 "<td><button class='btn' onclick=chatear('"+convers[i].producto.toString()+','+convers[i].comprador.toString()+"')>"+"Chatear"+"</button></td>"+

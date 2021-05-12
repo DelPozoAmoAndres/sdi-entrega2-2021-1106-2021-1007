@@ -81,7 +81,8 @@ module.exports = function (app, gestorBD) {
                     {
                         "autor": productos[0].autor,
                         "comprador": res.usuario,
-                        "producto": gestorBD.mongo.ObjectID(productos[0]._id)
+                        "producto": gestorBD.mongo.ObjectID(productos[0]._id),
+                        "nombre": productos[0].nombre
                     }
 
                 gestorBD.obtenerConversaciones(criterio, chat, function (conversaciones) {
@@ -99,7 +100,7 @@ module.exports = function (app, gestorBD) {
                             "hora": time,
                             "mensaje": req.body.texto,
                             "leido": false,
-                            "conversacion": gestorBD.mongo.ObjectID(conversaciones[0]._id)
+                            "conversacion": gestorBD.mongo.ObjectID(conversaciones._id)
                         }
 
                         gestorBD.insertarMensaje(mensaje, function (mensaje) {
@@ -184,7 +185,7 @@ module.exports = function (app, gestorBD) {
                         })
 
                 }else{
-                        let criterio={"conversacion":gestorBD.mongo.ObjectID(conversacion[0]._id)}
+                        let criterio={"conversacion":gestorBD.mongo.ObjectID(conversacion._id)}
                         gestorBD.obtenerMensajes(criterio,function (mensajes){
                            if(mensajes===null){
                                res.status(500);
