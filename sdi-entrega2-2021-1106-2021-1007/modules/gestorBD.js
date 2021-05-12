@@ -176,7 +176,7 @@ module.exports = {
             }
         })
     },
-    obtenerConversaciones: function (criterio, chat, functionCallback) {
+    obtenerConversacion: function (criterio, chat, functionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 functionCallback(null);
@@ -202,6 +202,24 @@ module.exports = {
                             functionCallback(conversaciones);
                         else
                             functionCallback(conversaciones[0]);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    obtenerConversaciones: function (criterio, chat, functionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                functionCallback(null);
+            } else {
+                let collection = db.collection('conversaciones');
+                collection.find(criterio).toArray(function (err, conversaciones) {
+                    if (err) {
+                        functionCallback(null);
+                    }
+                    else{
+                            functionCallback(conversaciones);
                     }
                     db.close();
                 });

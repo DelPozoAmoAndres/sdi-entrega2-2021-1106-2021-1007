@@ -85,7 +85,7 @@ module.exports = function (app, gestorBD) {
                         "nombre": productos[0].nombre
                     }
 
-                gestorBD.obtenerConversaciones(criterio, chat, function (conversaciones) {
+                gestorBD.obtenerConversacion(criterio, chat, function (conversaciones) {
                     if (conversaciones == null) {
                         res.status(500);
                         res.json({
@@ -136,7 +136,8 @@ module.exports = function (app, gestorBD) {
                 })
             } else {
                 res.status(200);
-                res.send(JSON.stringify(convers));
+                console.log(JSON.stringify(convers))
+                res.json(convers);
             }
         });
     })
@@ -171,7 +172,7 @@ module.exports = function (app, gestorBD) {
                         }
                     ]
                 };
-                gestorBD.obtenerConversaciones(criterio, undefined,function (conversacion) {
+                gestorBD.obtenerConversacion(criterio, undefined,function (conversacion) {
                     if (conversacion == null) {
                         res.status(500);
                         res.json({

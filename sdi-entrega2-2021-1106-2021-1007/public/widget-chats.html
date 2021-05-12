@@ -8,7 +8,7 @@
             <th class="col-md-1"></th>
         </tr>
         </thead>
-        <tbody id="tablaCuerpoChats">
+        <tbody id="chats">
         </tbody>
     </table>
     <div>
@@ -18,7 +18,12 @@
 <script>
     window.history.pushState("", "", "/cliente.html?w=chats");
     function cargarConversaciones() {
-        clearInterval(Cookies.get("interval"))
+        try {
+            clearInterval(Cookies.get("interval"))
+        }catch(e){
+
+        }
+        console.log("cargando")
         $.ajax({
             url: URLbase + "/producto/chats/",
             type: "GET",
@@ -27,7 +32,10 @@
             headers: {"token": token},
             success: function (respuesta) {
                 convers=respuesta
+                console.log("actualizando")
+                console.log(convers)
                 actualizarTablaChats(convers);
+
             },
             error: function (error) {
                 $("#contenedor-principal").load("widget-login.html");
@@ -39,19 +47,21 @@
 
 
     function actualizarTablaChats(convers) {
-        $("#tablaCuerpoChats").empty(); // Vaciar la tabla
+        $("#chats").empty(); // Vaciar la tabla
+        console.log("vaciando")
         for (i = 0; i < convers.length; i++) {
-            $("#tablaCuerpoChats").append(
+            console.log(convers[i])
+            $("#chats").append(
                 "<tr id=" + convers[i]._id + ">" +
                 "<td>" + convers[i].nombre + "</td>" +
                 "<td>" + convers[i].comprador + "</td>" +
                 "<td>" + convers[i].autor + "</td>" +
-                "<td><button class='btn' onclick=chatear('"+convers[i].producto.toString()+','+convers[i].comprador.toString()+"')>"+"Chatear"+"</button></td>"+
+                "<td><button class='btn' onclick=chatear('"+convers[i].producto+','+convers[i].comprador.toString()+"')>"+"Chatear"+"</button></td>"+
                 "</tr>")
         }
     }
 
-    cargarConversaciones();
+
     function chatear(param) {
         var parts=param.split(",")
         var id=parts[0]
@@ -72,6 +82,8 @@
             }
         });
     }
+
+    cargarConversaciones();
 
 
 
