@@ -20,10 +20,11 @@
     window.history.pushState("", "", "/cliente.html?w=chat");
     var productos;
     var idProducto=Cookies.get("idProducto")
+    var comprador=Cookies.get("comprador")
 
     function cargarMensajes() {
         $.ajax({
-            url: URLbase + "/producto/"+idProducto.toString()+"/chat/",
+            url: URLbase + "/producto/"+idProducto.toString()+"/chat/"+comprador,
             type: "GET",
             data: {},
             dataType: 'json',
@@ -33,6 +34,7 @@
                 actualizarTabla(mensajes);
             },
             error: function (error) {
+                console.log(token.usuario)
                 $("#contenedor-principal").load("widget-login.html");
             }
         });
@@ -41,24 +43,29 @@
     $("#enviar").click(()=>añadirMensaje($("#mensaje").val().toString()))
 
     function añadirMensaje(texto){
-        $.ajax({
-            url: URLbase + "/producto/"+idProducto.toString()+"/message/add",
-            type: "POST",
-            data: {texto:texto.toString()},
-            dataType: 'json',
-            headers: {"token": token},
-            success: function (respuesta) {
-                mensajes = respuesta;
-                cargarMensajes();
-            },
-            error: function (error) {
-                $("#contenedor-principal").load("widget-login.html");
-            }
-        });
+        if(texto.replace(" ","")!=="") {
+            $.ajax({
+                url: URLbase + "/producto/" + idProducto.toString() + "/message/add/" + comprador,
+                type: "POST",
+                data: {texto: texto.toString()},
+                dataType: 'json',
+                headers: {"token": token},
+                success: function (respuesta) {
+                    mensajes = respuesta;
+                    cargarMensajes();
+                },
+                error: function (error) {
+                    $("#contenedor-principal").load("widget-login.html");
+                }
+            });
+        }else{
+            alert("Mensaje sin texto")
+        }
     }
 
     function actualizarTabla(mensajes) {
         $("#tablaCuerpo").empty(); // Vaciar la tabla
+        $("#mensaje").empty()
         $("#tablaCuerpo").append("<td>" + idProducto + "</td>")
         for (i = 0; i < mensajes.length; i++) {
             $("#tablaCuerpo").append(
@@ -68,7 +75,7 @@
                 "</tr>")
         }
     }
-
+    setInterval(cargarMensajes(), 600);
     cargarMensajes();
 
 

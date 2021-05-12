@@ -46,7 +46,7 @@ module.exports = function (app, gestorBD) {
             }
         });
     });
-    app.post("/api/producto/:id/message/add", function (req, res) {
+    app.post("/api/producto/:id/message/add/:comprador", function (req, res) {
         let criterioProducto = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
         gestorBD.obtenerProductos(criterioProducto, function (productos) {
             if (productos == null || productos.length === 0) {
@@ -55,12 +55,13 @@ module.exports = function (app, gestorBD) {
                     error: "se ha producido un error"
                 })
             } else {
-                let criterioChat = {
+                let usuario = res.usuario
+                let criterio = {
                     $or: [
                         {
                             $and:
                                 [
-                                    {comprador: res.usuario},
+                                    {comprador: usuario},
                                     {autor: productos[0].autor},
                                     {producto: gestorBD.mongo.ObjectID(req.params.id)}
                                 ]
@@ -68,8 +69,8 @@ module.exports = function (app, gestorBD) {
                         {
                             $and:
                                 [
-                                    {autor: res.usuario},
-                                    {comprador: productos[0].autor},
+                                    {autor: usuario},
+                                    {comprador: req.params.comprador},
                                     {producto: gestorBD.mongo.ObjectID(req.params.id)}
                                 ]
                         }
@@ -83,7 +84,7 @@ module.exports = function (app, gestorBD) {
                         "producto": gestorBD.mongo.ObjectID(productos[0]._id)
                     }
 
-                gestorBD.obtenerConversaciones(criterioChat, chat, function (conversaciones) {
+                gestorBD.obtenerConversaciones(criterio, chat, function (conversaciones) {
                     if (conversaciones == null) {
                         res.status(500);
                         res.json({
@@ -139,7 +140,7 @@ module.exports = function (app, gestorBD) {
         });
     })
 
-    app.get("/api/producto/:id/chat", function (req, res) {
+    app.get("/api/producto/:id/chat/:comprador", function (req, res) {
         let criterioProducto = {"_id": gestorBD.mongo.ObjectID(req.params.id)}
         gestorBD.obtenerProductos(criterioProducto, function (productos) {
             if (productos == null || productos.length === 0) {
@@ -163,7 +164,7 @@ module.exports = function (app, gestorBD) {
                             $and:
                                 [
                                     {autor: usuario},
-                                    {comprador: productos[0].autor},
+                                    {comprador: req.params.comprador},
                                     {producto: gestorBD.mongo.ObjectID(req.params.id)}
                                 ]
                         }
@@ -183,8 +184,7 @@ module.exports = function (app, gestorBD) {
                         })
 
                 }else{
-                        let criterio={"conversacion":gestorBD.mongo.ObjectID(conversacion._id)}
-                        console.log(criterio.conversacion)
+                        let criterio={"conversacion":gestorBD.mongo.ObjectID(conversacion[0]._id)}
                         gestorBD.obtenerMensajes(criterio,function (mensajes){
                            if(mensajes===null){
                                res.status(500);
