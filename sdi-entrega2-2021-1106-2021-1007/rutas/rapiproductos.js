@@ -8,6 +8,7 @@ module.exports = function (app, gestorBD) {
             password: seguro
         }
         if (criterio.email === undefined || criterio.email.length === 0 || seguro.length === 0) {
+            app.get("logger").info('Inicio de sesión incorrecto con API REST');
             res.status(500);
             res.json({
                 error: "se ha producido un error de validacion"
@@ -15,11 +16,13 @@ module.exports = function (app, gestorBD) {
         } else {
             gestorBD.obtenerUsuarios(criterio, function (usuarios) {
                 if (usuarios == null || usuarios.length === 0) {
+                    app.get("logger").error('Error al iniciar sesión con API REST');
                     res.status(401); //Unauthorized
                     res.json({
                         autenticado: false
                     })
                 } else {
+                    app.get("logger").info('Inicio de sesión correcto con API REST');
                     let token = app.get('jwt').sign(
                         {usuario: criterio.email, tiempo: Date.now() / 1000},
                         "secreto");
@@ -36,11 +39,13 @@ module.exports = function (app, gestorBD) {
         let criterio = {"autor": {$ne: res.usuario}}
         gestorBD.obtenerProductos(criterio, function (productos) {
             if (productos == null) {
+                app.get("logger").error('Error al listar productos con API REST');
                 res.status(500);
                 res.json({
                     error: "se ha producido un error"
                 })
             } else {
+                app.get("logger").info('Listado de productos correcto con API REST');
                 res.status(200);
                 res.send(JSON.stringify(productos));
             }
@@ -105,11 +110,13 @@ module.exports = function (app, gestorBD) {
 
                         gestorBD.insertarMensaje(mensaje, function (mensaje) {
                             if (mensaje === null) {
+                                app.get("logger").error('Error al enviar mensaje con API REST');
                                 res.status(500);
                                 res.json({
                                     error: "se ha producido un error"
                                 })
                             } else {
+                                app.get("logger").info('Envio de mensaje correcto con API REST');
                                 res.json({
                                     id: mensaje
                                 })
@@ -130,13 +137,14 @@ module.exports = function (app, gestorBD) {
         }
         gestorBD.obtenerConversaciones(criterio, undefined,function (convers) {
             if (convers == null) {
+                app.get("logger").error('Error al obtener conversaciones con API REST');
                 res.status(500);
                 res.json({
                     error: "se ha producido un error"
                 })
             } else {
+                app.get("logger").info('Obtencion de conversaciones correcto con API REST');
                 res.status(200);
-                console.log(JSON.stringify(convers))
                 res.json(convers);
             }
         });
@@ -189,12 +197,14 @@ module.exports = function (app, gestorBD) {
                         let criterio={"conversacion":gestorBD.mongo.ObjectID(conversacion._id)}
                         gestorBD.obtenerMensajes(criterio,function (mensajes){
                            if(mensajes===null){
+                               app.get("logger").error('Error al obtener mensajes con API REST');
                                res.status(500);
                                res.json({
                                    error: "se ha producido un error"
                                })
                            }
                            else{
+                               app.get("logger").info('Obtencion de mensajeses correcto con API REST');
                                res.json(mensajes)
                            }
                        })

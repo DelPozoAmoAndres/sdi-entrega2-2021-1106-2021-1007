@@ -90,7 +90,6 @@ module.exports = function (app, swig, gestorBD) {
                                     app.get("logger").info("Eliminación correcta de los productos")
                                 }
                                     usuariosEliminados++;
-                                    console.log(usuariosEliminados)
                                     if (usuariosEliminados === users.length) {
                                         res.redirect("/homeAdmin")
                                     }

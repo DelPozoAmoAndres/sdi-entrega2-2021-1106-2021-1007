@@ -24,7 +24,6 @@
         }catch(e){
 
         }
-        console.log("cargando")
         $.ajax({
             url: URLbase + "/producto/chats/",
             type: "GET",
@@ -33,8 +32,6 @@
             headers: {"token": token},
             success: function (respuesta) {
                 convers=respuesta
-                console.log("actualizando")
-                console.log(convers)
                 actualizarTablaChats(convers);
 
             },
@@ -49,9 +46,7 @@
 
     function actualizarTablaChats(convers) {
         $("#chats").empty(); // Vaciar la tabla
-        console.log("vaciando")
         for (i = 0; i < convers.length; i++) {
-            console.log(convers[i])
             $("#chats").append(
                 "<tr id=" + convers[i]._id + ">" +
                 "<td>" + convers[i].nombre + "</td>" +

@@ -15,7 +15,6 @@
             for (checkbox of document.getElementsByName("checkBox")) {
                 if (checkbox.checked) {
                     var user = checkbox.getAttribute("id")
-                    console.log(user)
 
                     if (!first) {
                         url += "," + user.toString()
