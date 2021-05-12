@@ -22,7 +22,7 @@
 
 <script>
     window.history.pushState("", "", "/cliente.html?w=login");
-
+    clearInterval(Cookies.get("interval"))
     $("#boton-login").click(function (){
         $.ajax({
             url: URLbase + "/autenticar",

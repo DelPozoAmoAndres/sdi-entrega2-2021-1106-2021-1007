@@ -19,52 +19,52 @@
 <script>
     window.history.pushState("", "", "/cliente.html?w=chat");
     var productos;
-    var idProducto=Cookies.get("idProducto")
-    var comprador=Cookies.get("comprador")
+    var idProducto = Cookies.get("idProducto")
+    var comprador = Cookies.get("comprador")
 
     function cargarMensajes() {
-        console.log("aaaaaa");
-        $.ajax({
-            url: URLbase + "/producto/"+idProducto.toString()+"/chat/"+comprador,
-            type: "GET",
-            data: {},
-            dataType: 'json',
-            headers: {"token": token},
-            success: function (respuesta) {
-                mensajes=respuesta
-                actualizarTabla(mensajes);
-            },
-            error: function (error) {
-                console.log(token.usuario)
-                $("#contenedor-principal").load("widget-login.html");
-            }
-        });
-    }
-
-    $("#enviar").click(()=>añadirMensaje($("#mensaje").val().toString()))
-
-    function añadirMensaje(texto){
-        if(texto.replace(" ","")!=="") {
             $.ajax({
-                url: URLbase + "/producto/" + idProducto.toString() + "/message/add/" + comprador,
-                type: "POST",
-                data: {texto: texto.toString()},
+                url: URLbase + "/producto/" + idProducto.toString() + "/chat/" + comprador,
+                type: "GET",
+                data: {},
                 dataType: 'json',
                 headers: {"token": token},
                 success: function (respuesta) {
-                    mensajes = respuesta;
-                    cargarMensajes();
+                    mensajes = respuesta
+                    actualizarTabla(mensajes);
                 },
                 error: function (error) {
+                    console.log(token.usuario)
                     $("#contenedor-principal").load("widget-login.html");
                 }
             });
-        }else{
+    }
+
+    $("#enviar").click(() => añadirMensaje($("#mensaje").val().toString()))
+
+    function añadirMensaje(texto) {
+        if (texto.replace(" ", "") !== "") {
+                $.ajax({
+                    url: URLbase + "/producto/" + idProducto.toString() + "/message/add/" + comprador,
+                    type: "POST",
+                    data: {texto: texto.toString()},
+                    dataType: 'json',
+                    headers: {"token": token},
+                    success: function (respuesta) {
+                        mensajes = respuesta;
+                        cargarMensajes();
+                    },
+                    error: function (error) {
+                        $("#contenedor-principal").load("widget-login.html");
+                    }
+                });
+        } else {
             alert("Mensaje sin texto")
         }
     }
 
     function actualizarTabla(mensajes) {
+
         $("#tablaCuerpo").empty(); // Vaciar la tabla
         $("#mensaje").empty()
         $("#tablaCuerpo").append("<td>" + idProducto + "</td>")
@@ -76,7 +76,13 @@
                 "</tr>")
         }
     }
-    setInterval(()=>cargarMensajes(), 20);
+
+    function actualizar() {
+        var a=setInterval(() =>
+            cargarMensajes(), 1800)
+        Cookies.set("interval",a)
+    };
+    actualizar()
     cargarMensajes();
 
 

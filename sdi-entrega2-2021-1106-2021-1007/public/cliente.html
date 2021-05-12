@@ -24,6 +24,7 @@
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav" id="barra-menu">
                 <li><a onclick=widgetChats()>Chats</a></li>
+                <li><a onclick=widgetProducts()>Offers</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right" id="barra-menu-derecha">
                 <!-- Opciones de menú aqui -->
@@ -61,6 +62,9 @@
 
     function widgetChats(){
         $( "#contenedor-principal" ).load( "widget-chats.html");
+    }
+    function widgetProducts(){
+        $( "#contenedor-principal" ).load( "widget-productos.html");
     }
 </script>
 
