@@ -31,15 +31,15 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 
 	// Rutas para gecko y firefox
 	// Sergio
-//	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-//	static String Geckdriver024 = "C:\\Users\\sergi\\Documents\\geckodriver024win64.exe";
+	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
+	static String Geckdriver024 = "C:\\Users\\sergi\\Documents\\geckodriver024win64.exe";
 
 	// Rutas Andres.
-	static String PathFirefox65 = "C:\\Program Files (x86)\\Mozilla Firefox2\\firefox.exe";
-	static String Geckdriver024 = "C:\\Users\\ANDRES_JR\\Documents\\UNIOVI\\SDI\\LABS\\geckodriver.exe";
+//	static String PathFirefox65 = "C:\\Program Files (x86)\\Mozilla Firefox2\\firefox.exe";
+//	static String Geckdriver024 = "C:\\Users\\ANDRES_JR\\Documents\\UNIOVI\\SDI\\LABS\\geckodriver.exe";
 
 	static WebDriver driver = getDriver(PathFirefox65, Geckdriver024);
-	static String URL = "http://localhost:3000/";
+	static String URL = "https://localhost:3000/";
 
 	static MongoDatabase db;
 
@@ -89,6 +89,8 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		// Eliminamos las colecciones existentes
 		db.getCollection("usuarios").drop();
 		db.getCollection("productos").drop();
+		db.getCollection("conversaciones").drop();
+		db.getCollection("mensajes").drop();
 
 		// Las creamos otra vez para insertar los datos desde cero
 		db.createCollection("usuarios");
@@ -236,8 +238,7 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 
 	@Test
 	public void Prueba08() {
-		// Rellenamos el formulario de registro con datos incorrectos (campo email o
-		// contraseña vacíos)
+		// Rellenamos el formulario de registro con datos incorrectos (email inexistente)
 		PO_LoginView.login(driver, "inexistente@email.com", "00000000");
 		// Comprobamos que no hemos entrado en la pagina de inicio
 		PO_LoginView.checkNotLoged(driver);
@@ -559,6 +560,32 @@ public class SdiEntrega2Test2021110620211007ApplicationTests {
 		// Marco en destacar un producto y comprobamos que no se ha realizado
 		// correctamente
 		PO_UserView.distingProduct(driver, "Oferta8");
+	}
+
+	@Test
+	public void Prueba30() {
+		// Rellenamos el formulario de registro con datos correctos
+		PO_LoginView.loginAPI(driver, "sergio@email.com", "00000000");
+		// Comprobamos que hemos entrado en la pagina de inicio
+		PO_LoginView.checkHome(driver, "Tienda");
+	}
+
+	@Test
+	public void Prueba31() {
+		// Rellenamos el formulario de registro con datos incorrectos (email existente,
+		// pero contraseña incorrecta)
+		PO_LoginView.loginAPI(driver, "sergio@email.com", "11111111");
+		// Comprobamos que no hemos entrado en la pagina de inicio
+		PO_LoginView.error(driver, "Usuario no encontrado");
+	}
+
+	@Test
+	public void Prueba32() {
+		// Rellenamos el formulario de registro con datos incorrectos (campo email o
+		// contraseña vacíos)
+		PO_LoginView.loginAPI(driver, "sergio@email.com", "         ");
+		// Comprobamos que no hemos entrado en la pagina de inicio
+		PO_LoginView.error(driver, "Usuario no encontrado");
 	}
 
 }

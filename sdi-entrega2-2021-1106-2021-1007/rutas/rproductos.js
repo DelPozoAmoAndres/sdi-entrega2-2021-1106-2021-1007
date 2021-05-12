@@ -13,6 +13,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
         });
         res.send(respuesta);
     });
+
     //ruta post para añadir un producto
     app.post("/product/add", function (req, res) {
         //comprobar si hay errores al introducir los valores
@@ -31,32 +32,41 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
         //metodo de la base de datos para añadir un producto
         gestorBD.insertarProducto(producto, function (respuesta) {
             //checkeamos que no hay ningun error
-            if (respuesta == null)
+            if (respuesta == null) {
+                app.get("logger").error('Error al añadir un producto');
                 //redireccionamos a la vista de error
                 res.redirect("/systemError");
+            }
             else if (req.body.destacar) {
+                app.get("logger").info('Producto añadido y destacado correctamente');
                 res.redirect("/product/distinguish/" + respuesta)
-            } else
-
+            } else {
+                app.get("logger").info('Producto añadido correctamente');
                 res.redirect("/home?mensaje=Oferta añadida correctamente");
+            }
         });
     });
+
     //Ruta get para eliminar un producto
     app.get("/product/delete/:id", function (req, res) {
         //criterio del producto a eliminar
         let criterio = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         //Acceso a base de datos para obtener el producto a borrar y poder validarlo
         gestorBD.obtenerProductos(criterio, function (prod) {
-            if (prod === null)
+            if (prod === null) {
+                app.get("logger").error('Error al listar productos');
                 res.redirect("/systemError")
+            }
             //Comprobamos que el producto a borrar no esté comprado y sea propiedad del usuario autenticado
             else {
                 if (validadorProductos.checkEliminar(req, res, prod[0])) {
                     //Acceso a base de datos para borrar el producto
                     gestorBD.eliminarProducto(criterio, function (productos) {
                         if (productos == null) { //Si da error vamos a la pagina de error
+                            app.get("logger").error('Error al elimninar el producto');
                             res.redirect("/systemError");
                         } else { //si se ha eliminado bien volvemos a mostrar las ofertas del usuario
+                            app.get("logger").info('Producto eliminado correctamente');
                             res.redirect("/home");
                         }
                     });
@@ -64,6 +74,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
             }
         });
     });
+
     //ruta get para listar todos los productos
     app.get("/tienda", function (req, res) {
         //creamos un criterio para obtener los productos destacados
@@ -82,9 +93,12 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
         //metodo de la base de datos para obtener todos los productos que cumplan el criterio anterior
         gestorBD.obtenerProductos(criterio, function (destacados) {
             let criterio2;
-            if (destacados == null)
+            if (destacados == null) {
+                app.get("logger").error('Error al listar productos de la tienda');
                 res.redirect("/systemError");
+            }
             else {
+                app.get("logger").info('Listado correcto de los productos de la tienda');
                 //comprobamos si hemos hecho una busqueda de un producto por una palabra clave
                 if (req.query.busqueda != null && req.query.busqueda !== " " && req.query.busqueda !== "") {
                     //criterio para obtener los productos que tengan relación con la palabra clave,
@@ -144,6 +158,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
             }
         })
     });
+
     //ruta get para marcar como destacado un producto
     app.get("/product/distinguish/:id", function (req, res) {
         //criterio para saber que producto marcar como destacado
@@ -152,6 +167,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
         let criterio2 = {"email": req.session.usuario}
         //nuevo valor que le tenemos que introducir al producto en la base de datos
         let values = {"destacada": true}
+
         //comprobamos que el usuario tiene suficiente dinero para destacar el producto
         if (validadorProductos.checkSaldo(req, res, "/homeUser", 20))
             //metodo de la base de datos para descontar el dinero de su cuenta
@@ -168,32 +184,42 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                                 if (usuario == null) {
                                     res.redirect("/systemError")
                                 }
+                                app.get("logger").error('Error al destacar el producto');
                                 res.redirect("/homeUser?mensaje=Se ha producido un problema al " +
                                     "marcar como destacada dicho producto, intentelo más tarde")
                             })
                         } else {
+                            app.get("logger").info('Producto destacado correctamente');
                             req.session.dinero = req.session.dinero - 20
                             res.redirect("/home")
                         }
                     })
                 }
             })
+        else
+            app.get("logger").info('No se ha podido destacar el producto: No hay suficiente saldo');
     });
+
     //ruta gert para comprar un producto
     app.get("/product/buy/:id", function (req, res) {
         //criterio para comprar el producto
         let criterioProducto = {"_id": gestorBD.mongo.ObjectID(req.params.id)};
         //criterio para cobrar el dinero al comprador
         let criterioUsuario = {"email": req.session.usuario};
+
         //metodo de la base de datos para obtener el producto a comprar
         gestorBD.obtenerProductos(criterioProducto, function (producto) {
-            if (producto === null)
+            if (producto === null) {
+                app.get("logger").error('Error al comprar el producto');
                 res.redirect("/systemError")
+            }
             else {
                 //comprobamos que hay dinero suficiente para realizar la compra
                 let checkCompra = validadorProductos.checkCompra(req, res, producto[0]);
-                if (!checkCompra)
+                if (!checkCompra) {
+                    app.get("logger").info('No se ha podido comprar el producto: no hay suficiente saldo');
                     return;
+                }
                 //nuevo atributo a insertar en el producto comprado
                 let comprador = {
                     comprador: req.session.usuario
@@ -208,6 +234,7 @@ module.exports = function (app, swig, gestorBD, validadorProductos) {
                             if (resultado === null)
                                 res.redirect("/systemError");
                             else {
+                                app.get("logger").info('Compra del producto exitosa');
                                 req.session.dinero = req.session.dinero - producto[0].precio
                                 res.redirect("/user/buyed");
                             }

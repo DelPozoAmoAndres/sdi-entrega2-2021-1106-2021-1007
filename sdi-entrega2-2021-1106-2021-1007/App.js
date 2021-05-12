@@ -10,6 +10,14 @@ app.use(function(req, res, next) {
     next();
 });
 
+let log4js = require('log4js');
+log4js.configure({
+    appenders: {myWallapop: {type: 'file', filename: 'logs/myWallapop.log'}},
+    categories: {default: {appenders: ['myWallapop'], level: 'trace'}}
+});
+let logger = log4js.getLogger('myWallapop');
+app.set('logger', logger);
+
 let fs = require('fs');
 let https = require('https');
 

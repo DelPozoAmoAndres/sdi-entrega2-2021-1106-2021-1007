@@ -45,4 +45,9 @@ public class PO_LoginView extends PO_View {
 	static public void checkNoLogoutBut(WebDriver driver) {
 		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "Desconectarse", 2);
 	}
+
+	public static void loginAPI(WebDriver driver, String emailp, String passwordp) {
+		driver.navigate().to("https://localhost:3000/cliente.html?w=login");
+		fillForm(driver, emailp, passwordp);
+	}
 }

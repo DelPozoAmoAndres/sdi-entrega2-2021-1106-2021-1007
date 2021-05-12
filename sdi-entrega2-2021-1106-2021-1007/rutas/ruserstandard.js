@@ -7,9 +7,12 @@ module.exports = function (app, swig, gestorBD) {
         }
         //metodo de la base de datos que nos devuelve la lista de productos que coinciden con el criterio anterior
         gestorBD.obtenerProductos(criterio, function (productos) {
-            if (productos == null)
+            if (productos == null) {
+                app.get("logger").error('Error al listar productos del usuario');
                 res.redirect("/systemError")
+            }
             else {
+                app.get("logger").info('Listado correcto de los productos');
                 let usuario = {
                     email: req.session.usuario,
                     rol: req.session.rol,
@@ -32,9 +35,12 @@ module.exports = function (app, swig, gestorBD) {
         }
         //metodo para obtener los productos que ha comprado un usuario especificado por el criterio dado
         gestorBD.obtenerProductos(criterio, function (compras) {
-                if (compras == null)
+                if (compras == null){
+                    app.get("logger").error('Error al listar las compras del usuario');
                     res.redirect("/systemError")
+                }
                 else {
+                    app.get("logger").info('Listado correcto de los compras');
                     let usuario = {
                         email: req.session.usuario,
                         rol: req.session.rol,

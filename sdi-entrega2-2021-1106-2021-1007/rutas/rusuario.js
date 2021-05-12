@@ -25,8 +25,10 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
                 gestorBD.insertarUsuario(usuario, function (id) {
                     //si se produjo un error notificar
                     if (id == null) {
+                        app.get("logger").error('Error al registrar al usuario')
                         res.redirect("/registrarse?mensaje=Error al registrar usuario")
                     } else {
+                        app.get("logger").info('Nuevo usuario registrado');
                         //redireccionar al home haciendo autologin
                         req.session.usuario=usuario.email
                         res.redirect("/home?mensaje=Nuevo usuario registrado")
@@ -53,11 +55,16 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
         //metodo de la base de datos para saber si existe un usuario que coincide con el criterio anterior
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
             if (usuarios == null || usuarios.length === 0) {
+                if (usuarios==null)
+                    app.get("logger").error('Error al iniciar sesión');
+                else
+                    app.get("logger").info("Inicio de sesión incorrecto")
                 req.session.usuario = null;
                 res.redirect("/login" +
                     "?mensaje=Email o password incorrecto" +
                     "&tipoMensaje=alert-danger ");
             } else{
+                app.get("logger").info('Nuevo inicio de sesión');
                 req.session.usuario =usuarios[0].email
                 //redirigirle a la vista correcta
                 res.redirect("/home")
@@ -66,6 +73,7 @@ module.exports = function (app, swig, gestorBD, validadorUsuario) {
     });
     //ruta get para cerrar sesion
     app.get("/logout", function (req, res) {
+        app.get("logger").info('Sesión desconectada');
         req.session=null;
         res.redirect("/login")
     });
